@@ -9,7 +9,7 @@ import {
   ActivityLevel,
 } from '../../types/water';
 import { calculateIntakeGoal } from '../../features/onboarding/utils/calculator';
-import { ISqliteDriver, SqliteDriver } from './sqlite-driver';
+import { type ISqliteDriver, SqliteDriver } from './sqlite-driver';
 
 export const DEFAULT_DAILY_TARGET_ML = 2000;
 

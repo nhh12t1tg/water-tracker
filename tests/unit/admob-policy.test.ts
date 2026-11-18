@@ -211,6 +211,9 @@ describe('AdMob Policy & Cooldown Enforcement Unit Tests', () => {
 
     it('reports error when rewarded ad is not yet loaded', () => {
       (service as any).isRewardedLoaded = false;
+      if (Array.isArray((service as any).rewardedQueue)) {
+        (service as any).rewardedQueue = [];
+      }
 
       let errorMsg = '';
       service.showRewarded(

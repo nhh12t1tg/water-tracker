@@ -1,4 +1,6 @@
 import { isBuiltin } from 'node:module';
+import { fileURLToPath } from 'node:url';
+import fs from 'node:fs/promises';
 
 export async function resolve(specifier, context, nextResolve) {
   if (isBuiltin(specifier)) {
@@ -20,6 +22,17 @@ export async function resolve(specifier, context, nextResolve) {
 }
 
 export async function load(url, context, nextLoad) {
+  if (url.endsWith('.tsx')) {
+    const filePath = fileURLToPath(url);
+    const rawContent = await fs.readFile(filePath, 'utf-8');
+    // For tests, mock simple TSX components / export handlers
+    return {
+      format: 'module',
+      source: rawContent,
+      shortCircuit: true,
+    };
+  }
+
   const result = await nextLoad(url, context);
 
   if (url.endsWith('.ts')) {

@@ -1,25 +1,4 @@
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      [elem: string]: any;
-    }
-    interface Element {}
-  }
-}
-
-// Lightweight JSX factory support for zero-dependency runtime environments
-const React = {
-  createElement(type: any, props: any, ...children: any[]) {
-    return {
-      type,
-      props: {
-        ...(props || {}),
-        children: children.length === 0 ? undefined : (children.length === 1 ? children[0] : children),
-      },
-    };
-  },
-};
-
+import React from 'react';
 import { DEV_ADMOB_CONFIG } from '../../config/admob.config';
 
 export const BANNER_HEIGHT_DP = 60;

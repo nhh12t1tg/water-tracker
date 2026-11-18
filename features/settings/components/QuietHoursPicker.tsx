@@ -4,6 +4,12 @@ import { calculateSleepDurationHours } from '../../../services/notification/dnd-
 export { calculateSleepDurationHours };
 
 export interface QuietHoursPickerProps {
+  wakeUpTime: string;
+  bedTime: string;
+  isDndEnabled: boolean;
+  onWakeUpTimeChange: (time: string) => void;
+  onBedTimeChange: (time: string) => void;
+}
 
 export const QuietHoursPicker: React.FC<QuietHoursPickerProps> = ({
   wakeUpTime,

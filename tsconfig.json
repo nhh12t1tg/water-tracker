@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": [
+    "types/**/*",
+    "config/**/*",
+    "services/**/*",
+    "features/**/*",
+    "components/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    ".worktrees"
+  ]
+}
