@@ -1,0 +1,15 @@
+# Git Worktrees
+.worktrees/
+worktrees/
+
+# Dependencies & Build artifacts
+node_modules/
+dist/
+build/
+.gradle/
+
+# OS & IDE
+.DS_Store
+*.swp
+.idea/
+*.iml
