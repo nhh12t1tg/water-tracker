@@ -1,5 +1,9 @@
 import { AdMobConfig } from '../types/water';
 
+declare const process: {
+  env: Record<string, string | undefined>;
+};
+
 /**
  * AdMob Development & Production Configuration
  * 
@@ -30,22 +34,22 @@ export const DEV_ADMOB_CONFIG: AdMobConfig = {
     'EMULATOR', // Android Studio Emulator
   ],
 
-  // 4 minutes cooldown (240,000 ms) strictly enforced to avoid Disruptive Ads strikes
-  interstitialCooldownMs: 240000,
+  // 3 minutes cooldown (180,000 ms) strictly enforced to avoid Disruptive Ads strikes
+  interstitialCooldownMs: 180000,
 };
 
 export const PROD_ADMOB_CONFIG: AdMobConfig = {
   // Production IDs will be populated through build variants / Gradle BuildConfig
-  appId: process.env.ADMOB_APP_ID || '',
-  bannerAdUnitId: process.env.ADMOB_BANNER_ID || '',
-  interstitialAdUnitId: process.env.ADMOB_INTERSTITIAL_ID || '',
-  rewardedAdUnitId: process.env.ADMOB_REWARDED_ID || '',
+  appId: (typeof process !== 'undefined' && process.env?.ADMOB_APP_ID) || '',
+  bannerAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_BANNER_ID) || '',
+  interstitialAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_INTERSTITIAL_ID) || '',
+  rewardedAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_REWARDED_ID) || '',
   isTesting: false,
   testDeviceIds: [],
-  interstitialCooldownMs: 240000,
+  interstitialCooldownMs: 180000,
 };
 
 export function getActiveAdMobConfig(): AdMobConfig {
-  const isDev = process.env.NODE_ENV !== 'production';
+  const isDev = typeof process === 'undefined' || process.env?.NODE_ENV !== 'production';
   return isDev ? DEV_ADMOB_CONFIG : PROD_ADMOB_CONFIG;
 }
