@@ -1,6 +1,9 @@
-import { isBuiltin } from 'node:module';
+import { isBuiltin, createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
+
+const require = createRequire(import.meta.url);
+const ts = require('typescript');
 
 export async function resolve(specifier, context, nextResolve) {
   if (isBuiltin(specifier)) {
@@ -25,10 +28,16 @@ export async function load(url, context, nextLoad) {
   if (url.endsWith('.tsx')) {
     const filePath = fileURLToPath(url);
     const rawContent = await fs.readFile(filePath, 'utf-8');
-    // For tests, mock simple TSX components / export handlers
+    const transpiled = ts.transpileModule(rawContent, {
+      compilerOptions: {
+        module: ts.ModuleKind.ESNext,
+        target: ts.ScriptTarget.ESNext,
+        jsx: ts.JsxEmit.ReactJSX,
+      },
+    });
     return {
       format: 'module',
-      source: rawContent,
+      source: transpiled.outputText,
       shortCircuit: true,
     };
   }
