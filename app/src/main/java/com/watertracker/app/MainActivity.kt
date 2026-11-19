@@ -9,6 +9,7 @@ import com.google.android.gms.ads.RequestConfiguration
 import com.google.android.ump.ConsentInformation
 import com.google.android.ump.ConsentRequestParameters
 import com.google.android.ump.UserMessagingPlatform
+import com.watertracker.app.ads.AdMobManager
 import com.watertracker.app.ui.screens.HomeScreen
 import com.watertracker.app.ui.theme.WaterTrackerTheme
 import java.util.Collections
@@ -68,6 +69,8 @@ class MainActivity : ComponentActivity() {
             .setTestDeviceIds(listOf("EMULATOR"))
             .build()
         MobileAds.setRequestConfiguration(configuration)
-        MobileAds.initialize(this) {}
+        MobileAds.initialize(this) {
+            AdMobManager.initialize(this)
+        }
     }
 }

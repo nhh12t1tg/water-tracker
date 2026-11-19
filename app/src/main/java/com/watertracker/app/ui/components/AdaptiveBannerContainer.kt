@@ -12,9 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
+import com.watertracker.app.ads.AdMobManager
 import com.watertracker.app.ui.theme.GlassDarkBackground
 import com.watertracker.app.ui.theme.GlassLightBackground
 
@@ -32,6 +38,7 @@ fun AdaptiveBannerContainer(
     isTestMode: Boolean = true
 ) {
     val isDark = isSystemInDarkTheme()
+    val isInspection = LocalInspectionMode.current
 
     Column(
         modifier = modifier
@@ -53,21 +60,26 @@ fun AdaptiveBannerContainer(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            // Placeholder / Actual AdMob View will be embedded here via AndroidView
-            if (isTestMode) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Text(
-                        text = "AdMob Adaptive Banner [320x50 / Adaptive]",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontSize = 11.sp,
-                            fontWeight = FontWeight.Medium
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                    )
-                }
+            if (isInspection) {
+                Text(
+                    text = "AdMob Adaptive Banner [320x50 / Adaptive]",
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                )
+            } else {
+                AndroidView(
+                    factory = { context ->
+                        AdView(context).apply {
+                            adUnitId = AdMobManager.BANNER_TEST_ID
+                            setAdSize(AdSize.BANNER)
+                            loadAd(AdRequest.Builder().build())
+                        }
+                    },
+                    modifier = Modifier.wrapContentSize()
+                )
             }
         }
     }

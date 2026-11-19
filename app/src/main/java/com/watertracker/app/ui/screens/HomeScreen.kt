@@ -1,5 +1,6 @@
 package com.watertracker.app.ui.screens
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.watertracker.app.ads.AdMobManager
 import com.watertracker.app.data.WaterRepository
 import com.watertracker.app.ui.components.*
 import com.watertracker.app.ui.i18n.EnglishStrings
@@ -114,8 +116,19 @@ fun HomeScreen() {
                 strings = strings,
                 onBack = { currentScreen = AppScreen.HOME },
                 onWatchRewardForStreakFreeze = {
-                    repository.addStreakFreeze()
-                    availableFreezes = repository.getAvailableFreezes()
+                    val activity = context as? Activity
+                    if (activity != null) {
+                        AdMobManager.showRewarded(
+                            activity = activity,
+                            onRewardGranted = {
+                                repository.addStreakFreeze()
+                                availableFreezes = repository.getAvailableFreezes()
+                            }
+                        )
+                    } else {
+                        repository.addStreakFreeze()
+                        availableFreezes = repository.getAvailableFreezes()
+                    }
                 }
             )
         }
@@ -196,9 +209,29 @@ fun HomeScreen() {
                             themes.forEachIndexed { index, (name, _) ->
                                 OutlinedButton(
                                     onClick = {
-                                        selectedThemeIndex = index
-                                        repository.setActiveThemeIndex(index)
-                                        showThemeDialog = false
+                                        if (index == 0) {
+                                            selectedThemeIndex = index
+                                            repository.setActiveThemeIndex(index)
+                                            showThemeDialog = false
+                                        } else {
+                                            val activity = context as? Activity
+                                            if (activity != null) {
+                                                AdMobManager.showRewarded(
+                                                    activity = activity,
+                                                    onRewardGranted = {
+                                                        selectedThemeIndex = index
+                                                        repository.setActiveThemeIndex(index)
+                                                    },
+                                                    onDismissed = {
+                                                        showThemeDialog = false
+                                                    }
+                                                )
+                                            } else {
+                                                selectedThemeIndex = index
+                                                repository.setActiveThemeIndex(index)
+                                                showThemeDialog = false
+                                            }
+                                        }
                                     },
                                     modifier = Modifier.fillMaxWidth(),
                                     colors = ButtonDefaults.outlinedButtonColors(
@@ -227,7 +260,13 @@ fun HomeScreen() {
                 GoalCompletedDialog(
                     totalMl = targetMl,
                     strings = strings,
-                    onDismissAndShowInterstitial = { showGoalDialog = false }
+                    onDismissAndShowInterstitial = {
+                        showGoalDialog = false
+                        val activity = context as? Activity
+                        if (activity != null) {
+                            AdMobManager.showInterstitial(activity) {}
+                        }
+                    }
                 )
             }
         }
