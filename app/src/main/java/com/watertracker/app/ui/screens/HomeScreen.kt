@@ -1,6 +1,8 @@
 package com.watertracker.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -131,15 +133,25 @@ fun HomeScreen() {
                 selectedBeverage = selectedBeverage,
                 onSelectBeverage = { selectedBeverage = it },
                 onAddWater = { effectiveMl ->
+                    val previousMl = currentMl
                     val newTotal = repository.addWaterLog(effectiveMl, effectiveMl)
                     currentMl = newTotal
                     streakDays = repository.getStreakDays()
+                    if (previousMl < targetMl && newTotal >= targetMl && !repository.isGoalDialogShownToday()) {
+                        repository.setGoalDialogShownToday(true)
+                        showGoalDialog = true
+                    }
                 },
                 onOpenCustomDialog = { showCustomDialog = true },
                 onOpenThemeReward = { showThemeDialog = true },
                 onOpenHistory = { currentScreen = AppScreen.HISTORY },
                 onOpenSettings = { currentScreen = AppScreen.SETTINGS },
-                onGoalReached = { showGoalDialog = true },
+                onGoalReached = {
+                    if (!repository.isGoalDialogShownToday()) {
+                        repository.setGoalDialogShownToday(true)
+                        showGoalDialog = true
+                    }
+                },
                 strings = strings
             )
 
@@ -149,11 +161,16 @@ fun HomeScreen() {
                     onDismiss = { showCustomDialog = false },
                     strings = strings,
                     onConfirm = { customRawMl ->
+                        val previousMl = currentMl
                         val effective = Math.round(customRawMl * selectedBeverage.hydrationFactor)
                         val newTotal = repository.addWaterLog(customRawMl, effective)
                         currentMl = newTotal
                         streakDays = repository.getStreakDays()
                         showCustomDialog = false
+                        if (previousMl < targetMl && newTotal >= targetMl && !repository.isGoalDialogShownToday()) {
+                            repository.setGoalDialogShownToday(true)
+                            showGoalDialog = true
+                        }
                     }
                 )
             }
@@ -230,13 +247,6 @@ fun HomeScreen(
     val isDark = isSystemInDarkTheme()
     var lastLoggedFeedback by remember { mutableStateOf<String?>(null) }
 
-    // Trigger celebration when reaching 100% target
-    LaunchedEffect(currentMl, targetMl) {
-        if (currentMl >= targetMl && targetMl > 0) {
-            onGoalReached()
-        }
-    }
-
     val backgroundGradient = if (isDark) {
         Brush.verticalGradient(listOf(DeepBlueDark, Color(0xFF0F172A), DeepBlueCard))
     } else {
@@ -265,7 +275,7 @@ fun HomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween
             ) {
-                // TOP BAR: Streak Badge & Actions
+                // TOP BAR: Streak Badge & Highest Honor Badge & Actions
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -273,28 +283,76 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Streak Pill
+                    // Left: Streak Pill & Honor Badge Pill
                     Row(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(if (isDark) GlassDarkBackground else GlassLightBackground)
-                            .padding(horizontal = 12.dp, vertical = 6.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.LocalFireDepartment,
-                            contentDescription = "Streak flame",
-                            tint = FlameOrange,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Text(
-                            text = strings.streakDays(currentStreakDays),
-                            style = MaterialTheme.typography.labelLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
+                        // 1. Streak Flame Pill
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(if (isDark) GlassDarkBackground else GlassLightBackground)
+                                .clickable { onOpenHistory() }
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocalFireDepartment,
+                                contentDescription = "Streak flame",
+                                tint = FlameOrange,
+                                modifier = Modifier.size(18.dp)
                             )
-                        )
+                            Text(
+                                text = strings.streakDays(currentStreakDays),
+                                style = MaterialTheme.typography.labelMedium.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            )
+                        }
+
+                        // 2. Highest Honor Badge Pill (Huy Hiệu Danh Dự)
+                        val (badgeIcon, badgeTitle, badgeColor) = when {
+                            currentStreakDays >= 30 -> Triple("👑", strings.badgeMaster, GoldReward)
+                            currentStreakDays >= 14 -> Triple("🥇", strings.badgeGold, GoldReward)
+                            currentStreakDays >= 7  -> Triple("🥈", strings.badgeWeek, Color(0xFF38BDF8))
+                            currentStreakDays >= 3  -> Triple("🥉", strings.badgeStarter, Color(0xFFF97316))
+                            else -> Triple("🌱", "${currentStreakDays}/3d", Color(0xFF10B981))
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(
+                                    if (currentStreakDays >= 3) {
+                                        badgeColor.copy(alpha = 0.16f)
+                                    } else {
+                                        if (isDark) GlassDarkBackground else GlassLightBackground
+                                    }
+                                )
+                                .border(
+                                    1.dp,
+                                    if (currentStreakDays >= 3) badgeColor.copy(alpha = 0.45f) else Color(0x15FFFFFF),
+                                    RoundedCornerShape(20.dp)
+                                )
+                                .clickable { onOpenHistory() }
+                                .padding(horizontal = 10.dp, vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
+                        ) {
+                            Text(text = badgeIcon, fontSize = 13.sp)
+                            Text(
+                                text = badgeTitle,
+                                style = MaterialTheme.typography.labelSmall.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    color = if (currentStreakDays >= 3) badgeColor else MaterialTheme.colorScheme.onSurfaceVariant
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
 
                     // Action Icons (History & Settings)

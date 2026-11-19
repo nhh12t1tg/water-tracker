@@ -106,6 +106,46 @@ class WaterRepository(context: Context) {
         prefs.edit().putString("app_language", lang).apply()
     }
 
+    fun isGoalDialogShownToday(): Boolean {
+        return prefs.getBoolean("goal_dialog_shown_today", false)
+    }
+
+    fun setGoalDialogShownToday(shown: Boolean = true) {
+        prefs.edit().putBoolean("goal_dialog_shown_today", shown).apply()
+    }
+
+    fun getReminderIntervalMinutes(): Int {
+        return prefs.getInt("reminder_interval_minutes", 90)
+    }
+
+    fun setReminderIntervalMinutes(minutes: Int) {
+        prefs.edit().putInt("reminder_interval_minutes", minutes).apply()
+    }
+
+    fun isDndEnabled(): Boolean {
+        return prefs.getBoolean("is_dnd_enabled", true)
+    }
+
+    fun setDndEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("is_dnd_enabled", enabled).apply()
+    }
+
+    fun getWakeUpTime(): String {
+        return prefs.getString("dnd_wake_up_time", "07:00") ?: "07:00"
+    }
+
+    fun setWakeUpTime(time: String) {
+        prefs.edit().putString("dnd_wake_up_time", time).apply()
+    }
+
+    fun getBedTime(): String {
+        return prefs.getString("dnd_bed_time", "22:00") ?: "22:00"
+    }
+
+    fun setBedTime(time: String) {
+        prefs.edit().putString("dnd_bed_time", time).apply()
+    }
+
     fun getDailyGoalMl(): Int {
         return prefs.getInt("daily_goal_ml", 2500)
     }
