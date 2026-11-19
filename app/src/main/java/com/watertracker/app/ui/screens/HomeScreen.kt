@@ -1,5 +1,6 @@
 package com.watertracker.app.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -50,6 +51,11 @@ fun HomeScreen() {
 
     var currentScreen by remember {
         mutableStateOf(if (repository.isOnboarded()) AppScreen.HOME else AppScreen.ONBOARDING)
+    }
+
+    // Intercept phone's system back button/gesture to return to HOME instead of exiting app
+    BackHandler(enabled = currentScreen != AppScreen.HOME && repository.isOnboarded()) {
+        currentScreen = AppScreen.HOME
     }
 
     var currentMl by remember { mutableIntStateOf(repository.getTodayConsumedMl()) }

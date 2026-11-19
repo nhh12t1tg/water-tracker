@@ -1,6 +1,7 @@
 package com.watertracker.app.ui.screens
 
 import android.app.TimePickerDialog
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -57,6 +58,11 @@ fun SettingsScreen(
     var bedTime by remember { mutableStateOf(repository.getBedTime()) }
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showGdprToast by remember { mutableStateOf(false) }
+
+    // Dismiss language picker if back button is pressed while picker dialog is open
+    BackHandler(enabled = showLanguagePicker) {
+        showLanguagePicker = false
+    }
 
     val showTimePicker = { isWakeUp: Boolean ->
         val currentStr = if (isWakeUp) wakeUpTime else bedTime
