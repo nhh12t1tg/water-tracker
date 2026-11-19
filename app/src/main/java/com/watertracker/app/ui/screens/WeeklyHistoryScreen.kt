@@ -211,7 +211,8 @@ fun WeeklyHistoryScreen(
 
 @Composable
 private fun DayBarColumn(day: DayLogItem) {
-    val progress = (day.intakeMl.toFloat() / day.targetMl.coerceAtLeast(1)).coerceIn(0f, 1f)
+    val barFillProgress = (day.intakeMl.toFloat() / day.targetMl.coerceAtLeast(1)).coerceIn(0f, 1f)
+    val realPercentage = if (day.targetMl > 0) Math.round(day.intakeMl.toFloat() * 100f / day.targetMl.toFloat()) else 0
     val isAchieved = day.intakeMl >= day.targetMl
 
     Column(
@@ -219,9 +220,9 @@ private fun DayBarColumn(day: DayLogItem) {
         verticalArrangement = Arrangement.Bottom,
         modifier = Modifier.fillMaxHeight()
     ) {
-        // Percentage/Status Indicator
+        // Percentage/Status Indicator (Uncapped: shows true percentage even when > 100%)
         Text(
-            text = "${(progress * 100).toInt()}%",
+            text = "$realPercentage%",
             fontSize = 9.sp,
             fontWeight = FontWeight.SemiBold,
             color = if (isAchieved) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
@@ -241,7 +242,7 @@ private fun DayBarColumn(day: DayLogItem) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(progress)
+                    .fillMaxHeight(barFillProgress)
                     .clip(RoundedCornerShape(11.dp))
                     .background(
                         if (isAchieved) {

@@ -38,11 +38,12 @@ fun LiquidWaveCircle(
     waveBrush: Brush = WaterGradientCyan
 ) {
     val isDark = isSystemInDarkTheme()
-    val progress = (currentMl.toFloat() / targetMl.coerceAtLeast(1).toFloat()).coerceIn(0f, 1.2f)
+    // Visual level height clamped to 1.0f (100% full circle)
+    val visualProgress = (currentMl.toFloat() / targetMl.coerceAtLeast(1).toFloat()).coerceIn(0f, 1f)
 
     // Smooth level height animation (0.0 to 1.0)
     val animatedProgress by animateFloatAsState(
-        targetValue = progress,
+        targetValue = visualProgress,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
@@ -146,9 +147,9 @@ fun LiquidWaveCircle(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            val percentInt = (progress * 100).toInt()
+            val realPercentage = if (targetMl > 0) Math.round(currentMl.toFloat() * 100f / targetMl.toFloat()) else 0
             Text(
-                text = "$percentInt%",
+                text = "$realPercentage%",
                 style = MaterialTheme.typography.displayLarge.copy(
                     fontWeight = FontWeight.ExtraBold,
                     fontSize = 46.sp,
