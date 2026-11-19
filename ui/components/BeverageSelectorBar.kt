@@ -96,16 +96,6 @@ fun BeverageSelectorBar(
                         fontSize = 12.sp
                     )
                 )
-                Text(
-                    text = "${(beverage.hydrationFactor * 100).toInt()}%",
-                    maxLines = 1,
-                    softWrap = false,
-                    style = MaterialTheme.typography.labelSmall.copy(
-                        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.9f) else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                )
             }
         }
     }
