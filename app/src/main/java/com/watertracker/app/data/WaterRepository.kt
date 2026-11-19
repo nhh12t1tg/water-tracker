@@ -183,7 +183,7 @@ class WaterRepository(context: Context) {
             val consumed = if (i == 0) {
                 getTodayConsumedMl()
             } else {
-                prefs.getInt("history_$dateStr", (goal * (0.8 + 0.3 * Math.random())).toInt().coerceAtMost(goal + 300))
+                prefs.getInt("history_$dateStr", 0)
             }
 
             result.add(
