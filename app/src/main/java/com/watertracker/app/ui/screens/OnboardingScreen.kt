@@ -290,14 +290,6 @@ fun OnboardingScreen(
                             fontSize = 30.sp
                         )
                     )
-                    Text(
-                        text = strings.formulaNote(weightKg.toInt(), multiplier, activityOffset),
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontSize = 11.sp,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
-                        )
-                    )
                 }
 
                 // Big Start Button
