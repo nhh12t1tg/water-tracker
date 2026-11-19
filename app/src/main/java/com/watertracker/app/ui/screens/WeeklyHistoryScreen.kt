@@ -6,8 +6,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AcUnit
@@ -25,6 +27,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.watertracker.app.ui.components.AdaptiveBannerContainer
 import com.watertracker.app.ui.i18n.EnglishStrings
 import com.watertracker.app.ui.i18n.Strings
 import com.watertracker.app.ui.theme.*
@@ -82,13 +85,19 @@ fun WeeklyHistoryScreen(
                 )
             )
         },
+        bottomBar = {
+            AdaptiveBannerContainer(
+                isTestMode = true
+            )
+        },
         containerColor = if (isDark) DeepBlueDark else SkyBlueLight
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 20.dp),
+                .padding(horizontal = 20.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             // 1. 7-DAY BAR CHART CARD
@@ -205,6 +214,8 @@ fun WeeklyHistoryScreen(
                     BadgeCard(badge = badge, glassBg = glassBg, glassBorder = glassBorder)
                 }
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
