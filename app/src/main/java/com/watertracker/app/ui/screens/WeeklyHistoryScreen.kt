@@ -224,7 +224,31 @@ fun WeeklyHistoryScreen(
 private fun DayBarColumn(day: DayLogItem) {
     val barFillProgress = (day.intakeMl.toFloat() / day.targetMl.coerceAtLeast(1)).coerceIn(0f, 1f)
     val realPercentage = if (day.targetMl > 0) Math.round(day.intakeMl.toFloat() * 100f / day.targetMl.toFloat()) else 0
-    val isAchieved = day.intakeMl >= day.targetMl
+    val isOverAchieved = realPercentage > 100
+    val isAchieved = realPercentage >= 100
+    val isDark = isSystemInDarkTheme()
+
+    // Color gradient of the bar:
+    // - Overachieved (>100%): Radiant Sunset Gold/Amber
+    // - Goal Reached (100%): Fresh Mint/Cyan
+    // - In Progress (<100%): Ocean Sky Blue
+    val barGradient = when {
+        isOverAchieved -> Brush.verticalGradient(
+            listOf(Color(0xFFFBBF24), Color(0xFFF59E0B), Color(0xFFEA580C))
+        )
+        isAchieved -> Brush.verticalGradient(
+            listOf(CyanPrimary, MintAccent)
+        )
+        else -> Brush.verticalGradient(
+            listOf(Color(0xFF38BDF8), Color(0xFF0284C7))
+        )
+    }
+
+    val textColor = when {
+        isOverAchieved -> if (isDark) Color(0xFFFBBF24) else Color(0xFFD97706)
+        isAchieved -> if (isDark) MintLight else MintDark
+        else -> MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -235,13 +259,13 @@ private fun DayBarColumn(day: DayLogItem) {
         Text(
             text = "$realPercentage%",
             fontSize = 9.sp,
-            fontWeight = FontWeight.SemiBold,
-            color = if (isAchieved) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+            fontWeight = if (isAchieved) FontWeight.Bold else FontWeight.SemiBold,
+            color = textColor
         )
 
         Spacer(modifier = Modifier.height(4.dp))
 
-        // Bar Track
+        // Bar Track: 100% and >100% (e.g. 210%) both fill to full height (barFillProgress = 1.0f)
         Box(
             modifier = Modifier
                 .width(22.dp)
@@ -255,13 +279,7 @@ private fun DayBarColumn(day: DayLogItem) {
                     .fillMaxWidth()
                     .fillMaxHeight(barFillProgress)
                     .clip(RoundedCornerShape(11.dp))
-                    .background(
-                        if (isAchieved) {
-                            Brush.verticalGradient(listOf(CyanPrimary, MintAccent))
-                        } else {
-                            Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7)))
-                        }
-                    )
+                    .background(barGradient)
             )
         }
 
@@ -272,7 +290,9 @@ private fun DayBarColumn(day: DayLogItem) {
             text = day.dayName,
             style = MaterialTheme.typography.labelSmall.copy(
                 fontWeight = if (day.isToday) FontWeight.ExtraBold else FontWeight.Medium,
-                color = if (day.isToday) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                color = if (day.isToday) {
+                    if (isOverAchieved) (if (isDark) Color(0xFFFBBF24) else Color(0xFFD97706)) else CyanPrimary
+                } else MaterialTheme.colorScheme.onSurfaceVariant,
                 fontSize = 11.sp
             )
         )
