@@ -1,7 +1,9 @@
 package com.watertracker.app.ui.screens
 
+import android.app.Activity
 import android.app.TimePickerDialog
 import androidx.activity.compose.BackHandler
+import com.google.android.ump.UserMessagingPlatform
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,6 +60,7 @@ fun SettingsScreen(
     var bedTime by remember { mutableStateOf(repository.getBedTime()) }
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showGdprToast by remember { mutableStateOf(false) }
+    var isPersonalizedAds by remember { mutableStateOf(repository.isPersonalizedAdsEnabled()) }
 
     // Dismiss language picker if back button is pressed while picker dialog is open
     BackHandler(enabled = showLanguagePicker) {
@@ -366,13 +369,89 @@ fun SettingsScreen(
             if (showGdprToast) {
                 AlertDialog(
                     onDismissRequest = { showGdprToast = false },
-                    title = { Text(strings.settingsPrivacyTitle, fontWeight = FontWeight.Bold) },
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(Icons.Default.Security, contentDescription = null, tint = CyanPrimary)
+                            Text(strings.settingsPrivacyTitle, fontWeight = FontWeight.Bold)
+                        }
+                    },
                     text = {
-                        Text(strings.settingsPrivacyDesc)
+                        Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                            // 1. Personalized Ads Toggle
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = strings.privacyPersonalizedAds,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                                    )
+                                    Text(
+                                        text = if (isPersonalizedAds) strings.privacyPersonalizedOn else strings.privacyPersonalizedOff,
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontSize = 11.5.sp
+                                        )
+                                    )
+                                }
+                                Switch(
+                                    checked = isPersonalizedAds,
+                                    onCheckedChange = {
+                                        isPersonalizedAds = it
+                                        repository.setPersonalizedAdsEnabled(it)
+                                    }
+                                )
+                            }
+
+                            HorizontalDivider(color = Color(0x15FFFFFF))
+
+                            // 2. 100% Local Storage Info Card
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Text(
+                                        text = strings.privacyLocalStorageTitle,
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = CyanPrimary)
+                                    )
+                                    Text(
+                                        text = strings.privacyLocalStorageDesc,
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontSize = 11.sp
+                                        )
+                                    )
+                                }
+                            }
+
+                            // 3. Official Google UMP Form Button
+                            OutlinedButton(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        UserMessagingPlatform.showPrivacyOptionsForm(activity) { _ -> }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text(strings.privacyGoogleFormButton, fontSize = 12.sp)
+                            }
+                        }
                     },
                     confirmButton = {
                         TextButton(onClick = { showGdprToast = false }) {
-                            Text(strings.close)
+                            Text(strings.close, fontWeight = FontWeight.Bold)
                         }
                     }
                 )

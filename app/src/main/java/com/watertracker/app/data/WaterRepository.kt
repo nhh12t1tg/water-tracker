@@ -146,6 +146,14 @@ class WaterRepository(context: Context) {
         prefs.edit().putString("dnd_bed_time", time).apply()
     }
 
+    fun isPersonalizedAdsEnabled(): Boolean {
+        return prefs.getBoolean("personalized_ads_enabled", true)
+    }
+
+    fun setPersonalizedAdsEnabled(enabled: Boolean) {
+        prefs.edit().putBoolean("personalized_ads_enabled", enabled).apply()
+    }
+
     fun getDailyGoalMl(): Int {
         return prefs.getInt("daily_goal_ml", 2500)
     }
