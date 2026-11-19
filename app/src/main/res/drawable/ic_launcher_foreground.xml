@@ -1,30 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <path android:pathData="M31,63.928c0,0 6.4,-11 12.1,-13.1c7.2,-2.6 26,-1.4 26,-1.4l38.1,38.1L107,108.928l-32,-1L31,63.928z">
+
+    <!-- Subtle Drop Shadow beneath water droplet -->
+    <path
+        android:pathData="M54,28 C54,28 32,54 32,67 C32,79.5 41.8,85 54,85 C66.2,85 76,79.5 76,67 C76,54 54,28 54,28 Z"
+        android:fillColor="#33002845" />
+
+    <!-- Outer Crystal Droplet Body -->
+    <path android:pathData="M54,25 C54,25 31,52 31,65 C31,77.5 41.3,83 54,83 C66.7,83 77,77.5 77,65 C77,52 54,25 54,25 Z">
         <aapt:attr name="android:fillColor">
             <gradient
-                android:endX="85.84757"
-                android:endY="92.4963"
-                android:startX="42.9492"
-                android:startY="49.59793"
+                android:startX="54"
+                android:startY="25"
+                android:endX="54"
+                android:endY="83"
                 android:type="linear">
-                <item
-                    android:color="#44000000"
-                    android:offset="0.0" />
-                <item
-                    android:color="#00000000"
-                    android:offset="1.0" />
+                <item android:color="#F0FDFF" android:offset="0.0" />
+                <item android:color="#ADE8F4" android:offset="0.35" />
+                <item android:color="#48CAE4" android:offset="0.75" />
+                <item android:color="#0096C7" android:offset="1.0" />
             </gradient>
         </aapt:attr>
     </path>
+
+    <!-- Internal Liquid Wave filling the lower half of droplet -->
+    <path android:pathData="M31.2,65 C38,69 46,62 54,65 C62,68 70,62 76.8,65 C76.9,72 73.5,83 54,83 C34.5,83 31.1,72 31.2,65 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="32"
+                android:startY="62"
+                android:endX="76"
+                android:endY="83"
+                android:type="linear">
+                <item android:color="#06D6A0" android:offset="0.0" />
+                <item android:color="#00B4D8" android:offset="0.6" />
+                <item android:color="#0077B6" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Glossy Specular Glass Reflection (Upper Left Arc) -->
     <path
-        android:fillColor="#FFFFFF"
-        android:fillType="nonZero"
-        android:pathData="M65.3,45.828l3.8,-6.6c0.2,-0.4 0.1,-0.9 -0.3,-1.1c-0.4,-0.2 -0.9,-0.1 -1.1,0.3l-3.9,6.7c-6.3,-2.8 -13.4,-2.8 -19.7,0l-3.9,-6.7c-0.2,-0.4 -0.7,-0.5 -1.1,-0.3C38.8,38.328 38.7,38.828 38.9,39.228l3.8,6.6C36.2,49.428 31.7,56.028 31,63.928h46C76.3,56.028 71.8,49.428 65.3,45.828zM43.4,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2c-0.3,-0.7 -0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C45.3,56.528 44.5,57.328 43.4,57.328L43.4,57.328zM64.6,57.328c-0.8,0 -1.5,-0.5 -1.8,-1.2s-0.1,-1.5 0.4,-2.1c0.5,-0.5 1.4,-0.7 2.1,-0.4c0.7,0.3 1.2,1 1.2,1.8C66.5,56.528 65.6,57.328 64.6,57.328L64.6,57.328z"
-        android:strokeWidth="1"
-        android:strokeColor="#00000000" />
+        android:pathData="M44,36 C38.5,45 36.5,54 38.5,62 C39.8,62 41.8,55 43.8,48 C45.8,41 45.8,37.5 44,36 Z"
+        android:fillColor="#E6FFFFFF" />
+
+    <!-- Secondary Light Reflex Accent (Bottom Right Glow) -->
+    <path
+        android:pathData="M65,71m-3,0a3,3 0 1,1 6,0a3,3 0 1,1 -6,0"
+        android:fillColor="#80FFFFFF" />
 </vector>
