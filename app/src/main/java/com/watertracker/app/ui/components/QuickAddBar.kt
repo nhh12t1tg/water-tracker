@@ -51,8 +51,8 @@ fun QuickAddBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
+            .padding(horizontal = 14.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Quick volume presets
@@ -60,13 +60,15 @@ fun QuickAddBar(
             QuickVolumePill(
                 volumeMl = volume,
                 onClick = { onAddWater(volume) },
-                isDark = isDark
+                isDark = isDark,
+                modifier = Modifier.weight(1f)
             )
         }
 
         // Rewarded Video Gift Button (Unlock Wave Colors)
         Box(
             modifier = Modifier
+                .weight(1.3f)
                 .scale(pulseScale)
                 .height(48.dp)
                 .shadow(8.dp, RoundedCornerShape(24.dp), ambientColor = GoldReward.copy(alpha = 0.5f))
@@ -77,21 +79,22 @@ fun QuickAddBar(
                     )
                 )
                 .clickable(onClick = onWatchRewardForTheme)
-                .padding(horizontal = 14.dp),
+                .padding(horizontal = 8.dp),
             contentAlignment = Alignment.Center
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.CardGiftcard,
                     contentDescription = "Watch video to unlock themes",
                     tint = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
                 Text(
                     text = "Màu Nước",
+                    maxLines = 1,
                     style = MaterialTheme.typography.labelLarge.copy(
                         color = Color.White,
                         fontWeight = FontWeight.Bold,

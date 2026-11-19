@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -29,29 +30,114 @@ import com.watertracker.app.ui.theme.*
  * - Controls: Quick-add water pills + Gift theme unlock.
  * - Bottom: Isolated AdMob Banner container.
  */
+enum class AppScreen {
+    HOME,
+    HISTORY,
+    SETTINGS
+}
+
 @Composable
 fun HomeScreen() {
-    var currentMl by remember { mutableStateOf(1250) }
-    var targetMl by remember { mutableStateOf(2500) }
-    var streakDays by remember { mutableStateOf(5) }
+    var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
+    var currentMl by remember { mutableIntStateOf(1250) }
+    var targetMl by remember { mutableIntStateOf(2500) }
+    var streakDays by remember { mutableIntStateOf(5) }
     var showGoalDialog by remember { mutableStateOf(false) }
+    var showThemeDialog by remember { mutableStateOf(false) }
+    var selectedThemeIndex by remember { mutableIntStateOf(0) }
 
-    HomeScreen(
-        currentMl = currentMl,
-        targetMl = targetMl,
-        currentStreakDays = streakDays,
-        onAddWater = { ml -> currentMl += ml },
-        onOpenThemeReward = { /* Rewarded ad */ },
-        onOpenHistory = { /* Open history */ },
-        onOpenSettings = { /* Open settings */ },
-        onGoalReached = { showGoalDialog = true }
+    val themes = listOf(
+        Pair("Cyan Tươi Mát", WaterGradientCyan),
+        Pair("Mint Bạc Hà", WaterGradientMint),
+        Pair("Sunset Hoàng Hôn", Brush.verticalGradient(listOf(Color(0xFFFBBF24), Color(0xFFEA580C)))),
+        Pair("Deep Ocean", Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF1E3A8A))))
     )
 
-    if (showGoalDialog) {
-        GoalCompletedDialog(
-            totalMl = targetMl,
-            onDismissAndShowInterstitial = { showGoalDialog = false }
-        )
+    when (currentScreen) {
+        AppScreen.HISTORY -> {
+            val sampleWeeklyData = listOf(
+                DayLogItem("T2", 2400, 2500),
+                DayLogItem("T3", 2600, 2500),
+                DayLogItem("T4", 2500, 2500),
+                DayLogItem("T5", 2700, 2500),
+                DayLogItem("T6", 2500, 2500),
+                DayLogItem("T7", 2100, 2500),
+                DayLogItem("CN", currentMl, targetMl, isToday = true)
+            )
+            WeeklyHistoryScreen(
+                weeklyData = sampleWeeklyData,
+                currentStreak = streakDays,
+                availableFreezes = 1,
+                onBack = { currentScreen = AppScreen.HOME },
+                onWatchRewardForStreakFreeze = {
+                    streakDays += 1
+                }
+            )
+        }
+        AppScreen.SETTINGS -> {
+            SettingsScreen(
+                onBack = { currentScreen = AppScreen.HOME }
+            )
+        }
+        AppScreen.HOME -> {
+            HomeScreen(
+                currentMl = currentMl,
+                targetMl = targetMl,
+                currentStreakDays = streakDays,
+                activeWaveBrush = themes[selectedThemeIndex].second,
+                onAddWater = { ml -> currentMl += ml },
+                onOpenThemeReward = { showThemeDialog = true },
+                onOpenHistory = { currentScreen = AppScreen.HISTORY },
+                onOpenSettings = { currentScreen = AppScreen.SETTINGS },
+                onGoalReached = { showGoalDialog = true }
+            )
+
+            if (showThemeDialog) {
+                AlertDialog(
+                    onDismissRequest = { showThemeDialog = false },
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Icon(Icons.Default.CardGiftcard, contentDescription = null, tint = Color(0xFFF59E0B))
+                            Text("Mở Khóa Màu Nước Mới")
+                        }
+                    },
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Text("Xem 1 video ngắn (Rewarded Ad) để mở khóa màu nước yêu thích:", fontSize = 13.sp)
+                            themes.forEachIndexed { index, (name, _) ->
+                                OutlinedButton(
+                                    onClick = {
+                                        selectedThemeIndex = index
+                                        showThemeDialog = false
+                                    },
+                                    modifier = Modifier.fillMaxWidth(),
+                                    colors = ButtonDefaults.outlinedButtonColors(
+                                        containerColor = if (selectedThemeIndex == index) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else Color.Transparent
+                                    )
+                                ) {
+                                    Text(
+                                        text = if (index == 0) "$name (Mặc định)" else "🎁 $name ${if (selectedThemeIndex == index) "✓" else ""}",
+                                        fontWeight = if (selectedThemeIndex == index) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showThemeDialog = false }) {
+                            Text("Đóng")
+                        }
+                    }
+                )
+            }
+
+            if (showGoalDialog) {
+                GoalCompletedDialog(
+                    totalMl = targetMl,
+                    onDismissAndShowInterstitial = { showGoalDialog = false }
+                )
+            }
+        }
     }
 }
 
