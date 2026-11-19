@@ -154,6 +154,8 @@ fun HomeScreen(
     onGoalReached: () -> Unit
 ) {
     val isDark = isSystemInDarkTheme()
+    var selectedBeverage by remember { mutableStateOf(SCIENTIFIC_BEVERAGES[0]) }
+    var lastLoggedFeedback by remember { mutableStateOf<String?>(null) }
 
     // Trigger celebration when reaching 100% target
     LaunchedEffect(currentMl, targetMl) {
@@ -248,20 +250,32 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Daily Motivation Subtitle
+                // Daily Motivation Subtitle or Beverage Intake Feedback
                 Text(
-                    text = if (currentMl >= targetMl) "Tuyệt vời! Bạn đã đủ nước hôm nay 🎉" else "Hãy uống từng ngụm nhỏ để cơ thể hấp thụ tốt nhất",
+                    text = lastLoggedFeedback ?: if (currentMl >= targetMl) "Tuyệt vời! Bạn đã đủ nước hôm nay 🎉" else "Hãy uống từng ngụm nhỏ để cơ thể hấp thụ tốt nhất",
                     style = MaterialTheme.typography.bodyMedium.copy(
                         fontSize = 13.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        fontWeight = if (lastLoggedFeedback != null) FontWeight.SemiBold else FontWeight.Normal,
+                        color = if (lastLoggedFeedback != null) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 )
 
                 Spacer(modifier = Modifier.weight(0.6f))
 
+                // SCIENTIFIC BEVERAGE SELECTION BAR
+                BeverageSelectorBar(
+                    selectedBeverage = selectedBeverage,
+                    onSelectBeverage = { selectedBeverage = it },
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
                 // BOTTOM CONTROLS: Quick-Add & Rewarded Gift
                 QuickAddBar(
-                    onAddWater = onAddWater,
+                    onAddWater = { rawMl ->
+                        val effectiveMl = Math.round(rawMl * selectedBeverage.hydrationFactor)
+                        onAddWater(effectiveMl)
+                        lastLoggedFeedback = "${selectedBeverage.icon} +${rawMl}ml ${selectedBeverage.name} ➔ Hấp thu thực tế: +${effectiveMl}ml (${(selectedBeverage.hydrationFactor * 100).toInt()}% BHI)"
+                    },
                     onWatchRewardForTheme = onOpenThemeReward,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
