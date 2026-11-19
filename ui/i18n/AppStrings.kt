@@ -128,7 +128,7 @@ data class Strings(
 )
 
 val EnglishStrings = Strings(
-    appName = "Water Tracker",
+    appName = "AquaWave: Water Tracker",
     streakDays = { count -> if (count == 1) "1 day" else "$count days" },
     historyTitle = "History & Badges",
     settingsTitle = "Settings",
@@ -174,7 +174,7 @@ val EnglishStrings = Strings(
     goalDialogDesc = { goal -> "You reached $goal ml of water today. Your body and mind thank you!" },
     goalDialogCta = "Awesome, continue!",
 
-    onboardingWelcome = "Welcome to\nWater Tracker",
+    onboardingWelcome = "Welcome to\nAquaWave",
     onboardingSubtitle = "Personalize your daily hydration target based on clinical physiology standards",
     genderTitle = "1. YOUR BIOLOGICAL SEX",
     genderMale = "Male",
@@ -228,7 +228,7 @@ val EnglishStrings = Strings(
 )
 
 val VietnameseStrings = Strings(
-    appName = "Water Tracker",
+    appName = "AquaWave: Water Tracker",
     streakDays = { count -> "$count ngày" },
     historyTitle = "Lịch Sử & Huy Hiệu",
     settingsTitle = "Cài Đặt",
@@ -274,7 +274,7 @@ val VietnameseStrings = Strings(
     goalDialogDesc = { goal -> "Bạn đã uống đủ $goal ml nước hôm nay. Cơ thể của bạn đang cảm ơn bạn đấy!" },
     goalDialogCta = "Tuyệt vời, tiếp tục!",
 
-    onboardingWelcome = "Chào mừng đến với\nWater Tracker",
+    onboardingWelcome = "Chào mừng đến với\nAquaWave",
     onboardingSubtitle = "Hãy cá nhân hóa lượng nước mỗi ngày dựa trên chuẩn sinh lý học",
     genderTitle = "1. GIỚI TÍNH CỦA BẠN",
     genderMale = "Nam",
@@ -328,7 +328,7 @@ val VietnameseStrings = Strings(
 )
 
 val SpanishStrings = Strings(
-    appName = "Water Tracker",
+    appName = "AquaWave: Water Tracker",
     streakDays = { count -> if (count == 1) "1 día" else "$count días" },
     historyTitle = "Historial y Medallas",
     settingsTitle = "Ajustes",
@@ -374,7 +374,7 @@ val SpanishStrings = Strings(
     goalDialogDesc = { goal -> "Has tomado $goal ml de agua hoy. ¡Tu cuerpo te lo agradece!" },
     goalDialogCta = "¡Genial, continuar!",
 
-    onboardingWelcome = "Bienvenido a\nWater Tracker",
+    onboardingWelcome = "Bienvenido a\nAquaWave",
     onboardingSubtitle = "Personaliza tu objetivo diario de hidratación según normas fisiológicas clínicas",
     genderTitle = "1. TU SEXO BIOLÓGICO",
     genderMale = "Hombre",
@@ -428,7 +428,7 @@ val SpanishStrings = Strings(
 )
 
 val JapaneseStrings = Strings(
-    appName = "Water Tracker",
+    appName = "AquaWave: Water Tracker",
     streakDays = { count -> "$count 日連続" },
     historyTitle = "履歴 & バッジ",
     settingsTitle = "設定",
@@ -474,7 +474,7 @@ val JapaneseStrings = Strings(
     goalDialogDesc = { goal -> "今日 $goal ml の水分を補給しました。体が感謝しています！" },
     goalDialogCta = "続ける！",
 
-    onboardingWelcome = "Water Tracker へ\nようこそ",
+    onboardingWelcome = "AquaWave へ\nようこそ",
     onboardingSubtitle = "生理学的基準に基づき、毎日の水分補給目標をパーソナライズします",
     genderTitle = "1. 生物学的性別",
     genderMale = "男性",
@@ -528,7 +528,7 @@ val JapaneseStrings = Strings(
 )
 
 val GermanStrings = Strings(
-    appName = "Water Tracker",
+    appName = "AquaWave: Water Tracker",
     streakDays = { count -> if (count == 1) "1 Tag" else "$count Tage" },
     historyTitle = "Verlauf & Abzeichen",
     settingsTitle = "Einstellungen",
@@ -574,7 +574,7 @@ val GermanStrings = Strings(
     goalDialogDesc = { goal -> "Sie haben heute $goal ml Wasser getrunken. Ihr Körper dankt es Ihnen!" },
     goalDialogCta = "Großartig, weiter!",
 
-    onboardingWelcome = "Willkommen bei\nWater Tracker",
+    onboardingWelcome = "Willkommen bei\nAquaWave",
     onboardingSubtitle = "Personalisieren Sie Ihren täglichen Wasserbedarf nach physiologischen Standards",
     genderTitle = "1. BIOLOGISCHES GESCHLECHT",
     genderMale = "Männlich",
