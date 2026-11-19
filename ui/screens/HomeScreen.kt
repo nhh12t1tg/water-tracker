@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -28,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import com.watertracker.app.ads.AdMobManager
 import com.watertracker.app.data.WaterRepository
 import com.watertracker.app.ui.components.*
@@ -473,36 +475,68 @@ fun HomeScreen(
                 )
             }
 
-            // CONFIRMATION POPUP FOR INTAKE VOLUME
+            // CONFIRMATION POPUP FOR INTAKE VOLUME (Balanced 50/50 Button Layout & High Contrast)
             if (pendingAddMl != null) {
                 val volume = pendingAddMl!!
                 val effectiveMl = Math.round(volume * selectedBeverage.hydrationFactor)
                 val isVi = strings.cancel == "Hủy"
-                AlertDialog(
-                    onDismissRequest = { pendingAddMl = null },
-                    icon = {
-                        Text(text = selectedBeverage.icon, fontSize = 40.sp)
-                    },
-                    title = {
-                        Text(
-                            text = if (isVi) "Xác nhận uống nước" else "Confirm Intake",
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    },
-                    text = {
+
+                Dialog(onDismissRequest = { pendingAddMl = null }) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 4.dp),
+                        shape = RoundedCornerShape(28.dp),
+                        colors = CardDefaults.cardColors(
+                            containerColor = if (isDark) DeepBlueCard else Color.White
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                    ) {
                         Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(24.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
+                            // Icon in subtle circular badge
+                            Box(
+                                modifier = Modifier
+                                    .size(64.dp)
+                                    .clip(CircleShape)
+                                    .background(CyanPrimary.copy(alpha = 0.12f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(text = selectedBeverage.icon, fontSize = 32.sp)
+                            }
+
+                            // Title
                             Text(
-                                text = "+$volume ml ${selectedBeverage.name}",
+                                text = if (isVi) "Xác nhận uống nước" else "Confirm Intake",
                                 style = MaterialTheme.typography.titleLarge.copy(
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = MaterialTheme.colorScheme.primary
-                                )
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                ),
+                                textAlign = TextAlign.Center
                             )
+
+                            // Intake Amount Highlight Pill
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(CyanPrimary.copy(alpha = 0.1f))
+                                    .padding(horizontal = 16.dp, vertical = 6.dp)
+                            ) {
+                                Text(
+                                    text = "+$volume ml ${selectedBeverage.name}",
+                                    style = MaterialTheme.typography.titleMedium.copy(
+                                        fontWeight = FontWeight.ExtraBold,
+                                        color = CyanPrimary
+                                    )
+                                )
+                            }
+
+                            // Body text
                             Text(
                                 text = if (isVi) {
                                     "Bạn có muốn ghi nhận $volume ml ${selectedBeverage.name} vào mục tiêu hôm nay không?"
@@ -512,44 +546,72 @@ fun HomeScreen(
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.padding(horizontal = 8.dp)
                             )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            // BALANCED 2-BUTTON ROW (Equal 50/50 width, 48dp height, high contrast)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                // Cancel Button: Distinct neutral solid slate background, high contrast text
+                                Button(
+                                    onClick = { pendingAddMl = null },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(48.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0),
+                                        contentColor = if (isDark) Color(0xFFF1F5F9) else Color(0xFF334155)
+                                    ),
+                                    shape = RoundedCornerShape(14.dp),
+                                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 0.dp)
+                                ) {
+                                    Text(
+                                        text = strings.cancel,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp
+                                    )
+                                }
+
+                                // Confirm Button: Vibrant Cyan primary background, white bold text
+                                Button(
+                                    onClick = {
+                                        val toAdd = effectiveMl
+                                        onAddWater(toAdd)
+                                        lastLoggedFeedback = strings.bhiFeedbackFormat(
+                                            selectedBeverage.icon,
+                                            volume,
+                                            selectedBeverage.name,
+                                            toAdd,
+                                            (selectedBeverage.hydrationFactor * 100).toInt()
+                                        )
+                                        pendingAddMl = null
+                                    },
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .height(48.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = CyanPrimary,
+                                        contentColor = Color.White
+                                    ),
+                                    shape = RoundedCornerShape(14.dp),
+                                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+                                ) {
+                                    Text(
+                                        text = if (isVi) "Xác nhận" else "Confirm",
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 15.sp
+                                    )
+                                }
+                            }
                         }
-                    },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                val toAdd = effectiveMl
-                                onAddWater(toAdd)
-                                lastLoggedFeedback = strings.bhiFeedbackFormat(
-                                    selectedBeverage.icon,
-                                    volume,
-                                    selectedBeverage.name,
-                                    toAdd,
-                                    (selectedBeverage.hydrationFactor * 100).toInt()
-                                )
-                                pendingAddMl = null
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = CyanPrimary),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(
-                                text = if (isVi) "Xác nhận" else "Confirm",
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { pendingAddMl = null }) {
-                            Text(
-                                text = strings.cancel,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    },
-                    shape = RoundedCornerShape(24.dp)
-                )
+                    }
+                }
             }
         }
     }
