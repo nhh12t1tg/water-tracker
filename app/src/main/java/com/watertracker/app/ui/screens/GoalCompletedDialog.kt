@@ -21,6 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.watertracker.app.ui.i18n.EnglishStrings
+import com.watertracker.app.ui.i18n.Strings
 import com.watertracker.app.ui.theme.*
 
 /**
@@ -28,13 +30,14 @@ import com.watertracker.app.ui.theme.*
  * 
  * ADMOB POLICY COMPLIANCE:
  * This screen is an authorized NATURAL BREAK POINT.
- * When the user taps the primary CTA button "Tuyệt vời, tiếp tục!",
+ * When the user taps the primary CTA button,
  * the Interstitial Ad is presented without surprising or interrupting the user.
  */
 @Composable
 fun GoalCompletedDialog(
     totalMl: Int,
-    onDismissAndShowInterstitial: () -> Unit
+    onDismissAndShowInterstitial: () -> Unit,
+    strings: Strings = EnglishStrings
 ) {
     val isDark = isSystemInDarkTheme()
     val dialogBg = if (isDark) GlassDarkBackground else GlassLightBackground
@@ -74,7 +77,7 @@ fun GoalCompletedDialog(
                 }
 
                 Text(
-                    text = "Hoàn Thành Mục Tiêu!",
+                    text = strings.goalDialogTitle,
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
@@ -83,7 +86,7 @@ fun GoalCompletedDialog(
                 )
 
                 Text(
-                    text = "Bạn đã uống đủ $totalMl ml nước hôm nay. Cơ thể của bạn đang cảm ơn bạn đấy!",
+                    text = strings.goalDialogDesc(totalMl),
                     style = MaterialTheme.typography.bodyLarge.copy(
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -106,7 +109,7 @@ fun GoalCompletedDialog(
                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
                 ) {
                     Text(
-                        text = "Tuyệt vời, tiếp tục!",
+                        text = strings.goalDialogCta,
                         style = MaterialTheme.typography.labelLarge.copy(
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp

@@ -25,6 +25,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.watertracker.app.ui.i18n.EnglishStrings
+import com.watertracker.app.ui.i18n.Strings
 import com.watertracker.app.ui.theme.*
 
 data class DayLogItem(
@@ -36,6 +38,7 @@ data class DayLogItem(
 
 data class StreakBadge(
     val title: String,
+    val daysLabel: String,
     val targetDays: Int,
     val isUnlocked: Boolean
 )
@@ -51,26 +54,27 @@ fun WeeklyHistoryScreen(
     currentStreak: Int,
     availableFreezes: Int,
     onBack: () -> Unit,
-    onWatchRewardForStreakFreeze: () -> Unit
+    onWatchRewardForStreakFreeze: () -> Unit,
+    strings: Strings = EnglishStrings
 ) {
     val isDark = isSystemInDarkTheme()
     val glassBg = if (isDark) GlassDarkBackground else GlassLightBackground
     val glassBorder = if (isDark) GlassDarkBorder else GlassLightBorder
 
     val badges = listOf(
-        StreakBadge("Khởi Đầu", 3, currentStreak >= 3),
-        StreakBadge("Kiên Trì 1 Tuần", 7, currentStreak >= 7),
-        StreakBadge("Thói Quen Vàng", 14, currentStreak >= 14),
-        StreakBadge("Bậc Thầy Nước", 30, currentStreak >= 30)
+        StreakBadge(strings.badgeStarter, strings.badgeStarterDays, 3, currentStreak >= 3),
+        StreakBadge(strings.badgeWeek, strings.badgeWeekDays, 7, currentStreak >= 7),
+        StreakBadge(strings.badgeGold, strings.badgeGoldDays, 14, currentStreak >= 14),
+        StreakBadge(strings.badgeMaster, strings.badgeMasterDays, 30, currentStreak >= 30)
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Lịch Sử & Huy Hiệu", fontWeight = FontWeight.Bold) },
+                title = { Text(strings.historyTitle, fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = strings.back)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -101,13 +105,14 @@ fun WeeklyHistoryScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "Biểu Đồ 7 Ngày Qua",
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Bold
+                        text = strings.historyChartTitle,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
                     )
 
-                    // Bar Chart Row
+                    // Weekly Bars
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -116,106 +121,88 @@ fun WeeklyHistoryScreen(
                         verticalAlignment = Alignment.Bottom
                     ) {
                         weeklyData.forEach { day ->
-                            val heightFraction = (day.intakeMl.toFloat() / day.targetMl.toFloat()).coerceIn(0.08f, 1.0f)
-                            val isFull = day.intakeMl >= day.targetMl
-
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Bottom,
-                                modifier = Modifier.fillMaxHeight()
-                            ) {
-                                // Animated Pillar Bar
-                                Box(
-                                    modifier = Modifier
-                                        .width(28.dp)
-                                        .fillMaxHeight(heightFraction)
-                                        .clip(RoundedCornerShape(topStart = 14.dp, topEnd = 14.dp))
-                                        .background(
-                                            if (isFull) WaterGradientCyan else Brush.verticalGradient(
-                                                listOf(Color(0xFF94A3B8), Color(0xFF64748B))
-                                            )
-                                        )
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Text(
-                                    text = day.dayName,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontSize = 12.sp,
-                                        fontWeight = if (day.isToday) FontWeight.Bold else FontWeight.Normal,
-                                        color = if (day.isToday) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                )
-                            }
+                            DayBarColumn(day = day)
                         }
                     }
                 }
             }
 
-            // 2. STREAK RECOVERY VIA REWARDED AD CARD
+            // 2. STREAK FREEZE REWARD CARD
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(20.dp))
                     .background(
                         Brush.linearGradient(
-                            listOf(Color(0xFF0369A1), Color(0xFF0284C7))
+                            listOf(Color(0xFF0284C7).copy(alpha = 0.2f), Color(0xFF0EA5E9).copy(alpha = 0.1f))
                         )
-                    ),
+                    )
+                    .border(1.dp, Color(0xFF38BDF8).copy(alpha = 0.4f), RoundedCornerShape(20.dp)),
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(18.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                            Icon(Icons.Default.AcUnit, contentDescription = null, tint = CyanLight)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(44.dp)
+                                .clip(CircleShape)
+                                .background(Color(0xFF38BDF8).copy(alpha = 0.2f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(Icons.Default.AcUnit, contentDescription = null, tint = Color(0xFF38BDF8))
+                        }
+                        Column {
                             Text(
-                                text = "Bảo Vệ Chuỗi Streak ($availableFreezes sẵn có)",
-                                style = MaterialTheme.typography.labelLarge.copy(
-                                    color = Color.White,
-                                    fontWeight = FontWeight.Bold
+                                text = strings.streakShieldTitle(availableFreezes),
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
+                            )
+                            Text(
+                                text = strings.streakShieldDesc,
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 11.sp
                                 )
                             )
                         }
-                        Text(
-                            text = "Xem 1 video nhận 1 Khiên Đóng Băng khi lỡ quên uống",
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                color = Color.White.copy(alpha = 0.85f),
-                                fontSize = 12.sp
-                            )
-                        )
                     }
 
                     Button(
                         onClick = onWatchRewardForStreakFreeze,
-                        colors = ButtonDefaults.buttonColors(containerColor = GoldReward),
-                        shape = RoundedCornerShape(20.dp)
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0284C7)),
+                        shape = RoundedCornerShape(12.dp),
+                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
                     ) {
                         Icon(Icons.Default.PlayCircle, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("+1 Khiên", fontWeight = FontWeight.Bold, fontSize = 12.sp)
+                        Text(strings.addShieldCta, fontSize = 12.sp, fontWeight = FontWeight.Bold)
                     }
                 }
             }
 
-            // 3. STREAK BADGES SECTION
+            // 3. STREAK BADGES
             Text(
-                text = "Huy Hiệu Chuỗi ($currentStreak Ngày)",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                text = strings.badgesTitle(currentStreak),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             )
 
             LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(14.dp),
-                modifier = Modifier.fillMaxWidth()
+                horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 items(badges) { badge ->
-                    BadgeItem(badge = badge, isDark = isDark)
+                    BadgeCard(badge = badge, glassBg = glassBg, glassBorder = glassBorder)
                 }
             }
         }
@@ -223,57 +210,120 @@ fun WeeklyHistoryScreen(
 }
 
 @Composable
-private fun BadgeItem(badge: StreakBadge, isDark: Boolean) {
-    val glassBg = if (isDark) GlassDarkBackground else GlassLightBackground
-    val borderBrush = if (badge.isUnlocked) {
-        Brush.linearGradient(listOf(Color(0xFFFBBF24), GoldReward))
-    } else {
-        Brush.linearGradient(listOf(Color(0x33FFFFFF), Color(0x11FFFFFF)))
+private fun DayBarColumn(day: DayLogItem) {
+    val progress = (day.intakeMl.toFloat() / day.targetMl.coerceAtLeast(1)).coerceIn(0f, 1f)
+    val isAchieved = day.intakeMl >= day.targetMl
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Bottom,
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        // Percentage/Status Indicator
+        Text(
+            text = "${(progress * 100).toInt()}%",
+            fontSize = 9.sp,
+            fontWeight = FontWeight.SemiBold,
+            color = if (isAchieved) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        // Bar Track
+        Box(
+            modifier = Modifier
+                .width(22.dp)
+                .height(120.dp)
+                .clip(RoundedCornerShape(11.dp))
+                .background(Color(0x15FFFFFF)),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(progress)
+                    .clip(RoundedCornerShape(11.dp))
+                    .background(
+                        if (isAchieved) {
+                            Brush.verticalGradient(listOf(CyanPrimary, MintAccent))
+                        } else {
+                            Brush.verticalGradient(listOf(Color(0xFF38BDF8), Color(0xFF0284C7)))
+                        }
+                    )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Day Label (e.g. Mon, Tue)
+        Text(
+            text = day.dayName,
+            style = MaterialTheme.typography.labelSmall.copy(
+                fontWeight = if (day.isToday) FontWeight.ExtraBold else FontWeight.Medium,
+                color = if (day.isToday) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 11.sp
+            )
+        )
     }
+}
+
+@Composable
+private fun BadgeCard(
+    badge: StreakBadge,
+    glassBg: Color,
+    glassBorder: Color
+) {
+    val badgeColor = if (badge.isUnlocked) GoldReward else Color.Gray
 
     Column(
         modifier = Modifier
-            .width(105.dp)
+            .width(110.dp)
             .clip(RoundedCornerShape(18.dp))
             .background(glassBg)
-            .border(1.5.dp, borderBrush, RoundedCornerShape(18.dp))
+            .border(1.dp, if (badge.isUnlocked) GoldReward.copy(alpha = 0.5f) else glassBorder, RoundedCornerShape(18.dp))
             .padding(14.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(48.dp)
-                .shadow(if (badge.isUnlocked) 8.dp else 0.dp, CircleShape)
+                .size(46.dp)
                 .clip(CircleShape)
-                .background(
-                    if (badge.isUnlocked) Brush.radialGradient(listOf(Color(0xFFFF7043), FlameOrange))
-                    else Brush.linearGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
-                ),
+                .background(badgeColor.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                imageVector = if (badge.isUnlocked) Icons.Default.LocalFireDepartment else Icons.Default.Lock,
-                contentDescription = null,
-                tint = Color.White,
-                modifier = Modifier.size(24.dp)
-            )
+            if (badge.isUnlocked) {
+                Icon(
+                    imageVector = Icons.Default.LocalFireDepartment,
+                    contentDescription = "Unlocked",
+                    tint = GoldReward,
+                    modifier = Modifier.size(26.dp)
+                )
+            } else {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = "Locked",
+                    tint = Color.Gray.copy(alpha = 0.6f),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
 
         Text(
             text = badge.title,
-            style = MaterialTheme.typography.bodyMedium.copy(
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontWeight = FontWeight.Bold,
                 fontSize = 11.sp,
-                fontWeight = FontWeight.Bold
+                color = if (badge.isUnlocked) MaterialTheme.colorScheme.onBackground else Color.Gray
             ),
-            color = if (badge.isUnlocked) MaterialTheme.colorScheme.onBackground else Color.Gray
+            maxLines = 1
         )
 
         Text(
-            text = "${badge.targetDays} ngày",
-            style = MaterialTheme.typography.bodyMedium.copy(
+            text = badge.daysLabel,
+            style = MaterialTheme.typography.labelSmall.copy(
                 fontSize = 10.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
             )
         )
     }
