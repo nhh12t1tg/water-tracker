@@ -6,7 +6,9 @@ worktrees/
 node_modules/
 dist/
 build/
+app/build/
 .gradle/
+local.properties
 
 # OS & IDE
 .DS_Store

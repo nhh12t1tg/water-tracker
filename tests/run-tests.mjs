@@ -9,6 +9,7 @@ const registerLoaderPath = path.join(__dirname, 'register-loader.js');
 const testFiles = [
   path.join(__dirname, 'unit', 'hydration-core.test.ts'),
   path.join(__dirname, 'unit', 'admob-policy.test.ts'),
+  path.join(__dirname, 'unit', 'ump-consent.test.ts'),
   path.join(__dirname, 'unit', 'notification-dnd.test.ts'),
   path.join(__dirname, 'integration', 'end-to-end-flow.test.ts'),
 ];

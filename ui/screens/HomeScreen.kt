@@ -30,6 +30,32 @@ import com.watertracker.app.ui.theme.*
  * - Bottom: Isolated AdMob Banner container.
  */
 @Composable
+fun HomeScreen() {
+    var currentMl by remember { mutableStateOf(1250) }
+    var targetMl by remember { mutableStateOf(2500) }
+    var streakDays by remember { mutableStateOf(5) }
+    var showGoalDialog by remember { mutableStateOf(false) }
+
+    HomeScreen(
+        currentMl = currentMl,
+        targetMl = targetMl,
+        currentStreakDays = streakDays,
+        onAddWater = { ml -> currentMl += ml },
+        onOpenThemeReward = { /* Rewarded ad */ },
+        onOpenHistory = { /* Open history */ },
+        onOpenSettings = { /* Open settings */ },
+        onGoalReached = { showGoalDialog = true }
+    )
+
+    if (showGoalDialog) {
+        GoalCompletedDialog(
+            totalMl = targetMl,
+            onDismissAndShowInterstitial = { showGoalDialog = false }
+        )
+    }
+}
+
+@Composable
 fun HomeScreen(
     currentMl: Int,
     targetMl: Int,

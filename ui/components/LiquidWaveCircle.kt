@@ -101,8 +101,8 @@ fun LiquidWaveCircle(
     ) {
         // Wave Canvas
         Canvas(modifier = Modifier.fillMaxSize()) {
-            val width = size.width
-            val height = size.height
+            val width = this.size.width
+            val height = this.size.height
             val waterLevelY = height * (1f - (animatedProgress.coerceAtMost(1.0f)))
             val amplitude = 14.dp.toPx() * (1f - (animatedProgress - 0.5f).let { kotlin.math.abs(it) * 0.5f })
 

@@ -39,13 +39,13 @@ export const DEV_ADMOB_CONFIG: AdMobConfig = {
 };
 
 export const PROD_ADMOB_CONFIG: AdMobConfig = {
-  // Production IDs will be populated through build variants / Gradle BuildConfig
-  appId: (typeof process !== 'undefined' && process.env?.ADMOB_APP_ID) || '',
-  bannerAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_BANNER_ID) || '',
-  interstitialAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_INTERSTITIAL_ID) || '',
-  rewardedAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_REWARDED_ID) || '',
-  isTesting: false,
-  testDeviceIds: [],
+  // Production IDs populated dynamically via environment variables or BuildConfig
+  appId: (typeof process !== 'undefined' && process.env?.ADMOB_APP_ID) || DEV_ADMOB_CONFIG.appId,
+  bannerAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_BANNER_ID) || DEV_ADMOB_CONFIG.bannerAdUnitId,
+  interstitialAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_INTERSTITIAL_ID) || DEV_ADMOB_CONFIG.interstitialAdUnitId,
+  rewardedAdUnitId: (typeof process !== 'undefined' && process.env?.ADMOB_REWARDED_ID) || DEV_ADMOB_CONFIG.rewardedAdUnitId,
+  isTesting: typeof process !== 'undefined' && process.env?.ADMOB_IS_TESTING === 'true',
+  testDeviceIds: (typeof process !== 'undefined' && process.env?.ADMOB_TEST_DEVICES?.split(',')) || [],
   interstitialCooldownMs: 180000,
 };
 
