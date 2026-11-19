@@ -230,9 +230,6 @@ class WaterRepository(context: Context) {
 
             val consumed = if (i == 0) {
                 getTodayConsumedMl()
-            } else if (i == 1) {
-                // Ensure yesterday shows 100% target achievement for comparison with 210%
-                goal
             } else {
                 prefs.getInt("history_$dateStr", 0)
             }
