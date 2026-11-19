@@ -175,7 +175,7 @@ val EnglishStrings = Strings(
     goalDialogCta = "Awesome, continue!",
 
     onboardingWelcome = "Welcome to\nWater Tracker",
-    onboardingSubtitle = "Personalize your daily hydration target based on EFSA clinical physiology standards",
+    onboardingSubtitle = "Personalize your daily hydration target based on clinical physiology standards",
     genderTitle = "1. YOUR BIOLOGICAL SEX",
     genderMale = "Male",
     genderFemale = "Female",
@@ -188,8 +188,8 @@ val EnglishStrings = Strings(
     activityActive = "Active (> 60 min/day)",
     recommendedGoalTitle = "RECOMMENDED DAILY GOAL",
     recommendedGoalFormat = { goal -> "$goal ml/day" },
-    formulaNote = { weight, rate, offset -> "Formula: ($weight kg × $rate) + $offset ml (EFSA standard)" },
-    startTrackingCta = "Start Hydrating Now 🚀",
+    formulaNote = { weight, rate, offset -> "Formula: ($weight kg × $rate) + $offset ml" },
+    startTrackingCta = "Start Hydrating Now",
 
     settingsLanguageSection = "LANGUAGE & LOCALIZATION",
     settingsLanguageLabel = "App Display Language",
@@ -288,8 +288,8 @@ val VietnameseStrings = Strings(
     activityActive = "Vận động nhiều (Trên 60 phút/ngày)",
     recommendedGoalTitle = "MỤC TIÊU NƯỚC KHUYẾN NGHỊ",
     recommendedGoalFormat = { goal -> "$goal ml/ngày" },
-    formulaNote = { weight, rate, offset -> "Công thức: ($weight kg × $rate) + $offset ml theo chuẩn EFSA" },
-    startTrackingCta = "Bắt Đầu Uống Nước Ngay 🚀",
+    formulaNote = { weight, rate, offset -> "Công thức: ($weight kg × $rate) + $offset ml" },
+    startTrackingCta = "Bắt Đầu Uống Nước Ngay",
 
     settingsLanguageSection = "NGÔN NGỮ & HIỂN THỊ",
     settingsLanguageLabel = "Ngôn ngữ ứng dụng",
@@ -375,7 +375,7 @@ val SpanishStrings = Strings(
     goalDialogCta = "¡Genial, continuar!",
 
     onboardingWelcome = "Bienvenido a\nWater Tracker",
-    onboardingSubtitle = "Personaliza tu objetivo diario de hidratación según las normas de la EFSA",
+    onboardingSubtitle = "Personaliza tu objetivo diario de hidratación según normas fisiológicas clínicas",
     genderTitle = "1. TU SEXO BIOLÓGICO",
     genderMale = "Hombre",
     genderFemale = "Mujer",
@@ -388,8 +388,8 @@ val SpanishStrings = Strings(
     activityActive = "Activo (> 60 min/día)",
     recommendedGoalTitle = "OBJETIVO DIARIO RECOMENDADO",
     recommendedGoalFormat = { goal -> "$goal ml/día" },
-    formulaNote = { weight, rate, offset -> "Fórmula: ($weight kg × $rate) + $offset ml (Norma EFSA)" },
-    startTrackingCta = "Comenzar a Hidratarse 🚀",
+    formulaNote = { weight, rate, offset -> "Fórmula: ($weight kg × $rate) + $offset ml" },
+    startTrackingCta = "Comenzar a Hidratarse",
 
     settingsLanguageSection = "IDIOMA Y LOCALIZACIÓN",
     settingsLanguageLabel = "Idioma de la aplicación",
@@ -475,7 +475,7 @@ val JapaneseStrings = Strings(
     goalDialogCta = "続ける！",
 
     onboardingWelcome = "Water Tracker へ\nようこそ",
-    onboardingSubtitle = "EFSAの生理学的基準に基づき、毎日の水分補給目標をパーソナライズします",
+    onboardingSubtitle = "生理学的基準に基づき、毎日の水分補給目標をパーソナライズします",
     genderTitle = "1. 生物学的性別",
     genderMale = "男性",
     genderFemale = "女性",
@@ -488,8 +488,8 @@ val JapaneseStrings = Strings(
     activityActive = "活発な運動 (60分以上/日)",
     recommendedGoalTitle = "推奨される毎日の目標",
     recommendedGoalFormat = { goal -> "$goal ml/日" },
-    formulaNote = { weight, rate, offset -> "計算式: ($weight kg × $rate) + $offset ml (EFSA基準)" },
-    startTrackingCta = "水分補給を始める 🚀",
+    formulaNote = { weight, rate, offset -> "計算式: ($weight kg × $rate) + $offset ml" },
+    startTrackingCta = "水分補給を始める",
 
     settingsLanguageSection = "言語設定",
     settingsLanguageLabel = "表示言語",
@@ -575,7 +575,7 @@ val GermanStrings = Strings(
     goalDialogCta = "Großartig, weiter!",
 
     onboardingWelcome = "Willkommen bei\nWater Tracker",
-    onboardingSubtitle = "Personalisieren Sie Ihren täglichen Wasserbedarf nach physiologischen EFSA-Standards",
+    onboardingSubtitle = "Personalisieren Sie Ihren täglichen Wasserbedarf nach physiologischen Standards",
     genderTitle = "1. BIOLOGISCHES GESCHLECHT",
     genderMale = "Männlich",
     genderFemale = "Weiblich",
@@ -588,8 +588,8 @@ val GermanStrings = Strings(
     activityActive = "Aktiv (> 60 Min./Tag)",
     recommendedGoalTitle = "EMPFOHLENES TAGESZIEL",
     recommendedGoalFormat = { goal -> "$goal ml/Tag" },
-    formulaNote = { weight, rate, offset -> "Formel: ($weight kg × $rate) + $offset ml (EFSA-Standard)" },
-    startTrackingCta = "Jetzt mit Trinken beginnen 🚀",
+    formulaNote = { weight, rate, offset -> "Formel: ($weight kg × $rate) + $offset ml" },
+    startTrackingCta = "Jetzt mit Trinken beginnen",
 
     settingsLanguageSection = "SPRACHE & REGION",
     settingsLanguageLabel = "App-Sprache",
