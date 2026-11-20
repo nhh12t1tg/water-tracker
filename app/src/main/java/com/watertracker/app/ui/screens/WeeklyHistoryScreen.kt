@@ -14,16 +14,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.PlayCircle
-import androidx.compose.material.icons.filled.TrendingUp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -91,6 +92,7 @@ fun calculateAnalytics(data: List<DayLogItem>): DetailedAnalytics {
 /**
  * WeeklyHistoryScreen - 7-day and 30-day hydration analytics & Streak achievements.
  * Includes Deep Analytics reporting, Native Ads, and Rewarded Video streak protection.
+ * Redesigned with UI/UX Pro Max high-contrast pastel cards and clean segmented control.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -104,9 +106,11 @@ fun WeeklyHistoryScreen(
     strings: Strings = EnglishStrings
 ) {
     val isDark = isSystemInDarkTheme()
-    val glassBg = if (isDark) GlassDarkBackground else GlassLightBackground
-    val glassBorder = if (isDark) GlassDarkBorder else GlassLightBorder
     val isVi = strings.cancel == "Hủy"
+
+    // Primary Card background (Pure white in light mode, Deep slate in dark mode)
+    val cardBackground = if (isDark) DeepBlueCard else Color.White
+    val cardBorder = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)
 
     var selectedTab by remember { mutableIntStateOf(0) } // 0: 7 Days (Week), 1: 30 Days (Month)
     val activeData = if (selectedTab == 0 || monthlyData.isEmpty()) weeklyData else monthlyData
@@ -148,49 +152,80 @@ fun WeeklyHistoryScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(18.dp)
         ) {
-            // 1. PERIOD SELECTOR TABS (7 NGÀY vs 30 NGÀY)
+            // 1. HIGH-CONTRAST SEGMENTED CONTROL TABS (7 NGÀY vs 30 NGÀY)
+            val segmentTrackBg = if (isDark) Color(0xFF1E293B) else Color(0xFFF1F5F9)
+            val segmentBorder = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0)
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .background(glassBg)
-                    .border(1.dp, glassBorder, RoundedCornerShape(16.dp))
+                    .background(segmentTrackBg)
+                    .border(1.dp, segmentBorder, RoundedCornerShape(16.dp))
                     .padding(4.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 // Tab 0: 7 Days
+                val isSelected0 = selectedTab == 0
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (selectedTab == 0) CyanPrimary else Color.Transparent)
+                        .then(
+                            if (isSelected0) {
+                                Modifier
+                                    .shadow(elevation = 2.dp, shape = RoundedCornerShape(12.dp))
+                                    .background(if (isDark) Color(0xFF334155) else Color.White)
+                            } else {
+                                Modifier.background(Color.Transparent)
+                            }
+                        )
                         .clickable { selectedTab = 0 }
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (isVi) "📅 7 Ngày qua (Tuần)" else "📅 Last 7 Days (Week)",
-                        fontWeight = if (selectedTab == 0) FontWeight.Bold else FontWeight.Medium,
-                        color = if (selectedTab == 0) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp
+                        text = if (isVi) "📅 7 Ngày" else "📅 7 Days",
+                        fontWeight = if (isSelected0) FontWeight.ExtraBold else FontWeight.Medium,
+                        color = if (isSelected0) {
+                            if (isDark) Color(0xFF38BDF8) else CyanPrimary
+                        } else {
+                            if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+                        },
+                        fontSize = 14.sp,
+                        maxLines = 1
                     )
                 }
 
                 // Tab 1: 30 Days
+                val isSelected1 = selectedTab == 1
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .clip(RoundedCornerShape(12.dp))
-                        .background(if (selectedTab == 1) CyanPrimary else Color.Transparent)
+                        .then(
+                            if (isSelected1) {
+                                Modifier
+                                    .shadow(elevation = 2.dp, shape = RoundedCornerShape(12.dp))
+                                    .background(if (isDark) Color(0xFF334155) else Color.White)
+                            } else {
+                                Modifier.background(Color.Transparent)
+                            }
+                        )
                         .clickable { selectedTab = 1 }
                         .padding(vertical = 10.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (isVi) "📊 30 Ngày qua (Tháng)" else "📊 Last 30 Days (Month)",
-                        fontWeight = if (selectedTab == 1) FontWeight.Bold else FontWeight.Medium,
-                        color = if (selectedTab == 1) Color.White else MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSize = 13.sp
+                        text = if (isVi) "📊 30 Ngày" else "📊 30 Days",
+                        fontWeight = if (isSelected1) FontWeight.ExtraBold else FontWeight.Medium,
+                        color = if (isSelected1) {
+                            if (isDark) Color(0xFF38BDF8) else CyanPrimary
+                        } else {
+                            if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+                        },
+                        fontSize = 14.sp,
+                        maxLines = 1
                     )
                 }
             }
@@ -199,25 +234,34 @@ fun WeeklyHistoryScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(22.dp))
-                    .background(glassBg)
-                    .border(1.dp, glassBorder, RoundedCornerShape(22.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(cardBackground)
+                    .border(1.dp, cardBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = cardBackground),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(18.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                    modifier = Modifier.padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.TrendingUp,
-                            contentDescription = null,
-                            tint = CyanPrimary,
-                            modifier = Modifier.size(24.dp)
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(CyanPrimary.copy(alpha = 0.12f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                                contentDescription = null,
+                                tint = CyanPrimary,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
                         Column {
                             Text(
                                 text = if (isVi) "Báo Cáo Phân Tích Chuyên Sâu" else "Deep Hydration Analytics",
@@ -232,68 +276,73 @@ fun WeeklyHistoryScreen(
                                 } else {
                                     if (isVi) "Tổng kết chi tiết chu kỳ 30 ngày" else "30-day monthly comprehensive breakdown"
                                 },
-                                fontSize = 11.sp,
+                                fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     }
 
-                    // 4 Key Analytics Metric Blocks (2x2 Grid)
+                    // 4 DISTINCT HIGH-CONTRAST METRIC BLOCKS (2x2 Grid)
+                    // Designed with pastel tinted card backgrounds to eliminate white-on-white collision
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Metric 1: Total Volume
-                        MetricBox(
+                        // Metric 1: Total Intake (Sky Tint)
+                        PastelMetricBox(
                             modifier = Modifier.weight(1f),
                             title = if (isVi) "Tổng nạp" else "Total Intake",
                             value = "${String.format(Locale.US, "%.1f", analytics.totalMl / 1000f)} L",
                             subtitle = "${analytics.totalMl} ml",
-                            tintColor = CyanPrimary,
-                            glassBg = glassBg,
-                            glassBorder = glassBorder
+                            bgLight = Color(0xFFF0F9FF), // Sky 50
+                            borderLight = Color(0xFFBAE6FD), // Sky 200
+                            accentColor = CyanPrimary,
+                            isDark = isDark
                         )
 
-                        // Metric 2: Completion Rate
-                        MetricBox(
+                        // Metric 2: Completion Rate (Emerald Tint)
+                        PastelMetricBox(
                             modifier = Modifier.weight(1f),
                             title = if (isVi) "Đạt chuẩn" else "Target Rate",
                             value = "${analytics.completionRatePercent}%",
                             subtitle = if (analytics.completionRatePercent >= 100) (if (isVi) "Vượt mục tiêu" else "Exceeded") else (if (isVi) "Tiến độ chuẩn" else "On track"),
-                            tintColor = if (analytics.completionRatePercent >= 100) Color(0xFFF59E0B) else MintLight,
-                            glassBg = glassBg,
-                            glassBorder = glassBorder
+                            bgLight = Color(0xFFF0FDF4), // Emerald 50
+                            borderLight = Color(0xFFBBF7D0), // Emerald 200
+                            accentColor = if (analytics.completionRatePercent >= 100) Color(0xFFD97706) else Color(0xFF16A34A),
+                            isDark = isDark
                         )
                     }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        // Metric 3: Peak Day
-                        MetricBox(
+                        // Metric 3: Peak Day (Amber Tint)
+                        PastelMetricBox(
                             modifier = Modifier.weight(1f),
                             title = if (isVi) "Kỷ lục ngày" else "Peak Day",
                             value = "${analytics.peakDayMl} ml",
                             subtitle = if (analytics.peakDayName.isNotEmpty()) (if (isVi) "Ngày: ${analytics.peakDayName}" else "Day: ${analytics.peakDayName}") else "-",
-                            tintColor = Color(0xFFF59E0B),
-                            glassBg = glassBg,
-                            glassBorder = glassBorder
+                            bgLight = Color(0xFFFFFBEB), // Amber 50
+                            borderLight = Color(0xFFFDE68A), // Amber 200
+                            accentColor = Color(0xFFD97706),
+                            isDark = isDark
                         )
 
-                        // Metric 4: Goal Days Met
-                        MetricBox(
+                        // Metric 4: Goal Days Met (Indigo Tint)
+                        PastelMetricBox(
                             modifier = Modifier.weight(1f),
                             title = if (isVi) "Số ngày đạt" else "Goals Met",
                             value = "${analytics.achievedDaysCount} / ${analytics.totalDaysCount}",
                             subtitle = if (isVi) "ngày hoàn thành" else "days achieved",
-                            tintColor = Color(0xFF818CF8),
-                            glassBg = glassBg,
-                            glassBorder = glassBorder
+                            bgLight = Color(0xFFEEF2FF), // Indigo 50
+                            borderLight = Color(0xFFC7D2FE), // Indigo 200
+                            accentColor = Color(0xFF4F46E5),
+                            isDark = isDark
                         )
                     }
 
-                    // Smart Health Habit Encouragement Pill
+                    // Smart Health Habit Encouragement Pill (High Contrast Soft Banner)
                     val feedbackText = when {
                         analytics.completionRatePercent >= 80 -> {
                             if (isVi) "🌟 Phong độ xuất sắc! Bạn duy trì thói quen uống nước rất đều đặn và khoa học."
@@ -312,33 +361,35 @@ fun WeeklyHistoryScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(CyanPrimary.copy(alpha = 0.12f))
-                            .padding(horizontal = 14.dp, vertical = 10.dp)
+                            .clip(RoundedCornerShape(14.dp))
+                            .background(if (isDark) Color(0xFF0F172A) else Color(0xFFE0F2FE))
+                            .border(1.dp, if (isDark) Color(0xFF38BDF8).copy(alpha = 0.3f) else Color(0xFF7DD3FC), RoundedCornerShape(14.dp))
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
                     ) {
                         Text(
                             text = feedbackText,
                             style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.onBackground,
+                                color = if (isDark) Color(0xFFF1F5F9) else Color(0xFF0369A1),
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium
+                                fontWeight = FontWeight.SemiBold
                             )
                         )
                     }
                 }
             }
 
-            // 3. ADVANCED HYDRATION BAR / TREND CHART
+            // 3. ADVANCED HYDRATION BAR / TREND CHART (Scroll text removed completely)
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(RoundedCornerShape(22.dp))
-                    .background(glassBg)
-                    .border(1.dp, glassBorder, RoundedCornerShape(22.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(cardBackground)
+                    .border(1.dp, cardBorder, RoundedCornerShape(24.dp)),
+                colors = CardDefaults.cardColors(containerColor = cardBackground),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(18.dp),
+                    modifier = Modifier.padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Row(
@@ -358,9 +409,11 @@ fun WeeklyHistoryScreen(
                             )
                         )
 
+                        // Clean Status Badge (NO Scroll text)
                         Text(
-                            text = if (selectedTab == 0) (if (isVi) "Mục tiêu: 100%" else "Goal: 100%") else (if (isVi) "Cuộn ngang ➔" else "Scroll ➔"),
-                            fontSize = 11.sp,
+                            text = if (isVi) "Mục tiêu: 100%" else "Goal: 100%",
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
@@ -382,7 +435,6 @@ fun WeeklyHistoryScreen(
                         // 30-day Horizontally Scrollable Bars
                         val monthScrollState = rememberScrollState()
                         LaunchedEffect(Unit) {
-                            // Auto scroll to latest date
                             monthScrollState.scrollTo(monthScrollState.maxValue)
                         }
 
@@ -482,7 +534,7 @@ fun WeeklyHistoryScreen(
                 horizontalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 items(badges) { badge ->
-                    BadgeCard(badge = badge, glassBg = glassBg, glassBorder = glassBorder)
+                    BadgeCard(badge = badge, isDark = isDark)
                 }
             }
 
@@ -491,40 +543,48 @@ fun WeeklyHistoryScreen(
     }
 }
 
+/**
+ * High-contrast pastel metric box that completely prevents white-on-white blend.
+ */
 @Composable
-private fun MetricBox(
+private fun PastelMetricBox(
     modifier: Modifier = Modifier,
     title: String,
     value: String,
     subtitle: String,
-    tintColor: Color,
-    glassBg: Color,
-    glassBorder: Color
+    bgLight: Color,
+    borderLight: Color,
+    accentColor: Color,
+    isDark: Boolean
 ) {
+    val boxBg = if (isDark) Color(0xFF0F172A) else bgLight
+    val boxBorder = if (isDark) accentColor.copy(alpha = 0.4f) else borderLight
+
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(glassBg)
-            .border(1.dp, glassBorder, RoundedCornerShape(16.dp))
-            .padding(12.dp)
+            .background(boxBg)
+            .border(1.dp, boxBorder, RoundedCornerShape(16.dp))
+            .padding(14.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 text = title,
-                fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontWeight = FontWeight.Medium
+                fontSize = 12.sp,
+                color = if (isDark) Color(0xFF94A3B8) else Color(0xFF475569),
+                fontWeight = FontWeight.SemiBold
             )
             Text(
                 text = value,
-                fontSize = 18.sp,
+                fontSize = 19.sp,
                 fontWeight = FontWeight.ExtraBold,
-                color = tintColor
+                color = accentColor
             )
             Text(
                 text = subtitle,
-                fontSize = 10.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                fontSize = 11.sp,
+                color = if (isDark) Color(0xFF64748B) else Color(0xFF64748B),
+                fontWeight = FontWeight.Medium
             )
         }
     }
@@ -578,7 +638,7 @@ private fun DayBarColumn(
                 .width(barWidth)
                 .height(120.dp)
                 .clip(RoundedCornerShape(barWidth / 2))
-                .background(Color(0x15FFFFFF)),
+                .background(if (isDark) Color(0x22FFFFFF) else Color(0xFFF1F5F9)),
             contentAlignment = Alignment.BottomCenter
         ) {
             Box(
@@ -609,17 +669,18 @@ private fun DayBarColumn(
 @Composable
 private fun BadgeCard(
     badge: StreakBadge,
-    glassBg: Color,
-    glassBorder: Color
+    isDark: Boolean
 ) {
     val badgeColor = if (badge.isUnlocked) GoldReward else Color.Gray
+    val cardBg = if (isDark) Color(0xFF1E293B) else Color.White
+    val cardBorder = if (badge.isUnlocked) GoldReward.copy(alpha = 0.6f) else (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0))
 
     Column(
         modifier = Modifier
             .width(110.dp)
             .clip(RoundedCornerShape(18.dp))
-            .background(glassBg)
-            .border(1.dp, if (badge.isUnlocked) GoldReward.copy(alpha = 0.5f) else glassBorder, RoundedCornerShape(18.dp))
+            .background(cardBg)
+            .border(1.dp, cardBorder, RoundedCornerShape(18.dp))
             .padding(14.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)

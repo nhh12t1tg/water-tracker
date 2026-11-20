@@ -91,6 +91,12 @@ fun HomeScreen() {
 
     when (currentScreen) {
         AppScreen.ONBOARDING -> {
+            LaunchedEffect(Unit) {
+                val act = context as? Activity
+                if (act != null) {
+                    AdMobManager.preloadInterstitial(act)
+                }
+            }
             OnboardingScreen(
                 strings = strings,
                 currentLanguageCode = currentLanguageCode,

@@ -114,9 +114,36 @@ object AdMobManager {
             }
             ad.show(activity)
         } else {
-            Log.d(TAG, "InterstitialAd not ready yet. Continuing without blocking user.")
-            preloadInterstitial(activity)
-            onDismissed()
+            Log.d(TAG, "InterstitialAd not preloaded yet. Loading on-demand to display...")
+            val request = AdRequest.Builder().build()
+            InterstitialAd.load(
+                activity.applicationContext,
+                INTERSTITIAL_TEST_ID,
+                request,
+                object : InterstitialAdLoadCallback() {
+                    override fun onAdLoaded(loadedAd: InterstitialAd) {
+                        Log.d(TAG, "On-demand InterstitialAd loaded. Displaying now.")
+                        loadedAd.fullScreenContentCallback = object : FullScreenContentCallback() {
+                            override fun onAdDismissedFullScreenContent() {
+                                lastInterstitialShownTime = System.currentTimeMillis()
+                                preloadInterstitial(activity)
+                                onDismissed()
+                            }
+
+                            override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                                preloadInterstitial(activity)
+                                onDismissed()
+                            }
+                        }
+                        loadedAd.show(activity)
+                    }
+
+                    override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                        Log.w(TAG, "On-demand InterstitialAd failed to load: ${loadAdError.message}")
+                        onDismissed()
+                    }
+                }
+            )
         }
     }
 
