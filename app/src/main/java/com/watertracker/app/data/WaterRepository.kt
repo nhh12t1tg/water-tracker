@@ -65,6 +65,7 @@ class WaterRepository(context: Context) {
                 .putBoolean("goal_dialog_shown_today", false)
                 .putBoolean("half_goal_ad_shown_today", false)
                 .putBoolean("achieved_today", false)
+                .putInt("post_goal_adds_count", 0)
                 .apply()
         }
     }
@@ -122,6 +123,20 @@ class WaterRepository(context: Context) {
 
     fun setHalfGoalAdShownToday(shown: Boolean = true) {
         prefs.edit().putBoolean("half_goal_ad_shown_today", shown).apply()
+    }
+
+    fun getPostGoalAddsCount(): Int {
+        return prefs.getInt("post_goal_adds_count", 0)
+    }
+
+    fun incrementPostGoalAddsCount(): Int {
+        val current = getPostGoalAddsCount() + 1
+        prefs.edit().putInt("post_goal_adds_count", current).apply()
+        return current
+    }
+
+    fun resetPostGoalAddsCount() {
+        prefs.edit().putInt("post_goal_adds_count", 0).apply()
     }
 
     fun getReminderIntervalMinutes(): Int {

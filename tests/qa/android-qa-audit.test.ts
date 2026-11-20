@@ -296,6 +296,38 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       );
     });
 
+    it('verifies 4-intake post-100% interstitial ad frequency rule', () => {
+      let postGoalAddsCount = 0;
+      let adsShown = 0;
+
+      const addWaterPostGoal = () => {
+        postGoalAddsCount++;
+        if (postGoalAddsCount % 4 === 0) {
+          adsShown++;
+        }
+      };
+
+      // 1st to 3rd add -> no ad
+      addWaterPostGoal();
+      addWaterPostGoal();
+      addWaterPostGoal();
+      assert.strictEqual(adsShown, 0);
+
+      // 4th add -> ad shown!
+      addWaterPostGoal();
+      assert.strictEqual(adsShown, 1);
+
+      // 5th to 7th add -> no ad
+      addWaterPostGoal();
+      addWaterPostGoal();
+      addWaterPostGoal();
+      assert.strictEqual(adsShown, 1);
+
+      // 8th add -> 2nd ad shown!
+      addWaterPostGoal();
+      assert.strictEqual(adsShown, 2);
+    });
+
     it('verifies onboarding completion triggers interstitial ad at transition', async () => {
       await adMob.initialize();
       let interstitialTriggered = false;

@@ -190,6 +190,14 @@ fun HomeScreen() {
                         repository.setGoalDialogShownToday(true)
                         repository.setHalfGoalAdShownToday(true)
                         showGoalDialog = true
+                    } else if (previousMl >= targetMl) {
+                        val count = repository.incrementPostGoalAddsCount()
+                        if (count % 4 == 0) {
+                            val activity = context as? Activity
+                            if (activity != null) {
+                                AdMobManager.showInterstitial(activity) {}
+                            }
+                        }
                     }
                 },
                 onOpenCustomDialog = { showCustomDialog = true },
@@ -234,6 +242,14 @@ fun HomeScreen() {
                             repository.setGoalDialogShownToday(true)
                             repository.setHalfGoalAdShownToday(true)
                             showGoalDialog = true
+                        } else if (previousMl >= targetMl) {
+                            val count = repository.incrementPostGoalAddsCount()
+                            if (count % 4 == 0) {
+                                val activity = context as? Activity
+                                if (activity != null) {
+                                    AdMobManager.showInterstitial(activity) {}
+                                }
+                            }
                         }
                     }
                 )

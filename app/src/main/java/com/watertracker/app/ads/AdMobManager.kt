@@ -76,20 +76,9 @@ object AdMobManager {
     }
 
     /**
-     * Show Interstitial Ad upon natural break (e.g., 100% daily goal achieved).
-     * Strictly enforces 3-minute cooldown.
+     * Show Interstitial Ad upon natural break or milestone trigger without cooldown block.
      */
-    fun showInterstitial(activity: Activity, onDismissed: () -> Unit) {
-        val now = System.currentTimeMillis()
-        val timeSinceLast = now - lastInterstitialShownTime
-
-        if (timeSinceLast < INTERSTITIAL_COOLDOWN_MS && lastInterstitialShownTime > 0) {
-            val remainingSec = (INTERSTITIAL_COOLDOWN_MS - timeSinceLast) / 1000
-            Log.d(TAG, "Interstitial blocked by cooldown. $remainingSec seconds remaining.")
-            onDismissed()
-            return
-        }
-
+    fun showInterstitial(activity: Activity, onDismissed: () -> Unit = {}) {
         val ad = interstitialAd
         if (ad != null) {
             ad.fullScreenContentCallback = object : FullScreenContentCallback() {
