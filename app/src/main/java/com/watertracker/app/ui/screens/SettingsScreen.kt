@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.watertracker.app.data.WaterRepository
+import com.watertracker.app.ui.components.NativeAdCard
 import com.watertracker.app.ui.i18n.EnglishStrings
 import com.watertracker.app.ui.i18n.Strings
 import com.watertracker.app.ui.i18n.SupportedLanguage
@@ -365,6 +366,13 @@ fun SettingsScreen(
                     }
                 }
             }
+
+            // Google AdMob Native Ad Card (Cleanly placed at bottom of Settings)
+            NativeAdCard(
+                adSponsoredLabel = if (strings.cancel == "Hủy") "Được tài trợ" else "Sponsored"
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             if (showGdprToast) {
                 AlertDialog(

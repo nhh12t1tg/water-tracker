@@ -1,5 +1,10 @@
 package com.watertracker.app.ui.screens
 
+import android.app.Activity
+import android.app.TimePickerDialog
+import androidx.activity.compose.BackHandler
+import com.google.android.ump.UserMessagingPlatform
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +16,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Security
@@ -22,13 +28,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.watertracker.app.data.WaterRepository
+import com.watertracker.app.ui.components.NativeAdCard
 import com.watertracker.app.ui.i18n.EnglishStrings
 import com.watertracker.app.ui.i18n.Strings
 import com.watertracker.app.ui.i18n.SupportedLanguage
 import com.watertracker.app.ui.theme.*
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,16 +49,47 @@ fun SettingsScreen(
     currentLanguageCode: String = "en",
     onSelectLanguage: (String) -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val repository = remember { WaterRepository(context) }
     val isDark = isSystemInDarkTheme()
     val glassBg = if (isDark) GlassDarkBackground else GlassLightBackground
     val glassBorder = if (isDark) GlassDarkBorder else GlassLightBorder
 
-    var isDndEnabled by remember { mutableStateOf(true) }
-    var intervalMinutes by remember { mutableIntStateOf(90) }
-    var wakeUpTime by remember { mutableStateOf("07:00") }
-    var bedTime by remember { mutableStateOf("22:00") }
+    var isDndEnabled by remember { mutableStateOf(repository.isDndEnabled()) }
+    var intervalMinutes by remember { mutableIntStateOf(repository.getReminderIntervalMinutes()) }
+    var wakeUpTime by remember { mutableStateOf(repository.getWakeUpTime()) }
+    var bedTime by remember { mutableStateOf(repository.getBedTime()) }
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showGdprToast by remember { mutableStateOf(false) }
+    var isPersonalizedAds by remember { mutableStateOf(repository.isPersonalizedAdsEnabled()) }
+
+    // Dismiss language picker if back button is pressed while picker dialog is open
+    BackHandler(enabled = showLanguagePicker) {
+        showLanguagePicker = false
+    }
+
+    val showTimePicker = { isWakeUp: Boolean ->
+        val currentStr = if (isWakeUp) wakeUpTime else bedTime
+        val parts = currentStr.split(":")
+        val initialHour = parts.getOrNull(0)?.toIntOrNull() ?: (if (isWakeUp) 7 else 22)
+        val initialMinute = parts.getOrNull(1)?.toIntOrNull() ?: 0
+        TimePickerDialog(
+            context,
+            { _, hourOfDay, minute ->
+                val formatted = String.format(Locale.US, "%02d:%02d", hourOfDay, minute)
+                if (isWakeUp) {
+                    wakeUpTime = formatted
+                    repository.setWakeUpTime(formatted)
+                } else {
+                    bedTime = formatted
+                    repository.setBedTime(formatted)
+                }
+            },
+            initialHour,
+            initialMinute,
+            true
+        ).show()
+    }
 
     Scaffold(
         topBar = {
@@ -89,11 +131,12 @@ fun SettingsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { showLanguagePicker = true }
-                        .padding(14.dp),
+                        .padding(horizontal = 4.dp, vertical = 2.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(
+                        modifier = Modifier.weight(1f),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
@@ -103,25 +146,35 @@ fun SettingsScreen(
                             tint = CyanPrimary,
                             modifier = Modifier.size(24.dp)
                         )
-                        Column {
+                        Column(modifier = Modifier.weight(1f, fill = false)) {
                             Text(
                                 text = strings.settingsLanguageLabel,
-                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold)
+                                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                             Text(
                                 text = "${currentLang.flag} ${currentLang.displayName}",
                                 style = MaterialTheme.typography.bodySmall.copy(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                ),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                     }
 
                     FilledTonalButton(
                         onClick = { showLanguagePicker = true },
-                        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp)
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                        modifier = Modifier.padding(start = 8.dp)
                     ) {
-                        Text(currentLang.code.uppercase(), fontWeight = FontWeight.Bold)
+                        Text(
+                            text = "${currentLang.flag} ${currentLang.code.uppercase()}",
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            softWrap = false
+                        )
                     }
                 }
             }
@@ -137,17 +190,59 @@ fun SettingsScreen(
             )
 
             SettingCard(glassBg, glassBorder) {
-                SettingRow(
-                    icon = Icons.Default.Notifications,
-                    title = strings.settingsReminderFrequency,
-                    subtitle = strings.settingsReminderFreqFormat(intervalMinutes)
-                ) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Notifications,
+                            contentDescription = null,
+                            tint = CyanPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = strings.settingsReminderFrequency,
+                                style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Text(
+                                text = strings.settingsReminderFreqFormat(intervalMinutes),
+                                style = MaterialTheme.typography.bodySmall.copy(
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            )
+                        }
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         listOf(60, 90, 120).forEach { mins ->
                             FilterChip(
                                 selected = intervalMinutes == mins,
-                                onClick = { intervalMinutes = mins },
-                                label = { Text("${mins}m") }
+                                onClick = {
+                                    intervalMinutes = mins
+                                    repository.setReminderIntervalMinutes(mins)
+                                },
+                                modifier = Modifier.weight(1f),
+                                label = {
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(
+                                            text = "${mins}m",
+                                            fontWeight = if (intervalMinutes == mins) FontWeight.Bold else FontWeight.Normal,
+                                            maxLines = 1,
+                                            softWrap = false
+                                        )
+                                    }
+                                }
                             )
                         }
                     }
@@ -173,14 +268,22 @@ fun SettingsScreen(
                     ) {
                         Switch(
                             checked = isDndEnabled,
-                            onCheckedChange = { isDndEnabled = it }
+                            onCheckedChange = {
+                                isDndEnabled = it
+                                repository.setDndEnabled(it)
+                            }
                         )
                     }
 
                     HorizontalDivider(color = Color(0x15FFFFFF))
 
+                    // Clickable Wake-up time picker row
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showTimePicker(true) }
+                            .padding(vertical = 6.dp, horizontal = 2.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -191,11 +294,29 @@ fun SettingsScreen(
                             Icon(Icons.Default.WbSunny, contentDescription = null, tint = Color(0xFFFBBF24), modifier = Modifier.size(20.dp))
                             Text(strings.settingsWakeTime, style = MaterialTheme.typography.bodyMedium)
                         }
-                        Text(wakeUpTime, fontWeight = FontWeight.Bold, color = CyanPrimary)
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text(wakeUpTime, fontWeight = FontWeight.Bold, color = CyanPrimary)
+                                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = CyanPrimary, modifier = Modifier.size(13.dp))
+                            }
+                        }
                     }
 
+                    // Clickable Bedtime picker row
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showTimePicker(false) }
+                            .padding(vertical = 6.dp, horizontal = 2.dp),
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -206,7 +327,20 @@ fun SettingsScreen(
                             Icon(Icons.Default.Bedtime, contentDescription = null, tint = Color(0xFF818CF8), modifier = Modifier.size(20.dp))
                             Text(strings.settingsBedTime, style = MaterialTheme.typography.bodyMedium)
                         }
-                        Text(bedTime, fontWeight = FontWeight.Bold, color = CyanPrimary)
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f))
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text(bedTime, fontWeight = FontWeight.Bold, color = CyanPrimary)
+                                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = CyanPrimary, modifier = Modifier.size(13.dp))
+                            }
+                        }
                     }
                 }
             }
@@ -233,16 +367,99 @@ fun SettingsScreen(
                 }
             }
 
+            // Google AdMob Native Ad Card (Cleanly placed at bottom of Settings)
+            NativeAdCard(
+                adSponsoredLabel = if (strings.cancel == "Hủy") "Được tài trợ" else "Sponsored"
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
             if (showGdprToast) {
                 AlertDialog(
                     onDismissRequest = { showGdprToast = false },
-                    title = { Text(strings.settingsPrivacyTitle, fontWeight = FontWeight.Bold) },
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(Icons.Default.Security, contentDescription = null, tint = CyanPrimary)
+                            Text(strings.settingsPrivacyTitle, fontWeight = FontWeight.Bold)
+                        }
+                    },
                     text = {
-                        Text(strings.settingsPrivacyDesc)
+                        Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                            // 1. Personalized Ads Toggle
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = strings.privacyPersonalizedAds,
+                                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold)
+                                    )
+                                    Text(
+                                        text = if (isPersonalizedAds) strings.privacyPersonalizedOn else strings.privacyPersonalizedOff,
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontSize = 11.5.sp
+                                        )
+                                    )
+                                }
+                                Switch(
+                                    checked = isPersonalizedAds,
+                                    onCheckedChange = {
+                                        isPersonalizedAds = it
+                                        repository.setPersonalizedAdsEnabled(it)
+                                    }
+                                )
+                            }
+
+                            HorizontalDivider(color = Color(0x15FFFFFF))
+
+                            // 2. 100% Local Storage Info Card
+                            Surface(
+                                shape = RoundedCornerShape(10.dp),
+                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f))
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(12.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    Text(
+                                        text = strings.privacyLocalStorageTitle,
+                                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold, color = CyanPrimary)
+                                    )
+                                    Text(
+                                        text = strings.privacyLocalStorageDesc,
+                                        style = MaterialTheme.typography.bodySmall.copy(
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            fontSize = 11.sp
+                                        )
+                                    )
+                                }
+                            }
+
+                            // 3. Official Google UMP Form Button
+                            OutlinedButton(
+                                onClick = {
+                                    val activity = context as? Activity
+                                    if (activity != null) {
+                                        UserMessagingPlatform.showPrivacyOptionsForm(activity) { _ -> }
+                                    }
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(10.dp)
+                            ) {
+                                Text(strings.privacyGoogleFormButton, fontSize = 12.sp)
+                            }
+                        }
                     },
                     confirmButton = {
                         TextButton(onClick = { showGdprToast = false }) {
-                            Text(strings.close)
+                            Text(strings.close, fontWeight = FontWeight.Bold)
                         }
                     }
                 )
