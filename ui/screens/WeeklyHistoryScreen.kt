@@ -392,31 +392,17 @@ fun WeeklyHistoryScreen(
                     modifier = Modifier.padding(20.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = if (selectedTab == 0) {
-                                strings.historyChartTitle
-                            } else {
-                                if (isVi) "Biểu Đồ Xu Hướng 30 Ngày" else "30-Day Hydration Trend Chart"
-                            },
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
+                    Text(
+                        text = if (selectedTab == 0) {
+                            strings.historyChartTitle
+                        } else {
+                            if (isVi) "Biểu Đồ 30 Ngày" else "30-Day Hydration Chart"
+                        },
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
                         )
-
-                        // Clean Status Badge (NO Scroll text)
-                        Text(
-                            text = if (isVi) "Mục tiêu: 100%" else "Goal: 100%",
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    )
 
                     if (selectedTab == 0) {
                         // 7-day Bar columns evenly spaced
