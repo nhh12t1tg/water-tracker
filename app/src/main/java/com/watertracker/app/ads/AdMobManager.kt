@@ -4,11 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.util.Log
 import com.google.android.gms.ads.AdError
+import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 
@@ -28,6 +31,7 @@ object AdMobManager {
     const val BANNER_TEST_ID = "ca-app-pub-3940256099942544/6300978111"
     const val INTERSTITIAL_TEST_ID = "ca-app-pub-3940256099942544/1033173712"
     const val REWARDED_TEST_ID = "ca-app-pub-3940256099942544/5224354917"
+    const val NATIVE_TEST_ID = "ca-app-pub-3940256099942544/2247696110"
 
     private const val INTERSTITIAL_COOLDOWN_MS = 180000L // 3 minutes
 
@@ -188,5 +192,33 @@ object AdMobManager {
             onRewardGranted()
             onDismissed()
         }
+    }
+
+    /**
+     * Load Google AdMob Native Ad using official test ID.
+     */
+    fun loadNativeAd(
+        context: Context,
+        adUnitId: String = NATIVE_TEST_ID,
+        onAdLoaded: (NativeAd) -> Unit,
+        onAdFailed: (LoadAdError) -> Unit = {}
+    ) {
+        val adLoader = AdLoader.Builder(context.applicationContext, adUnitId)
+            .forNativeAd { ad ->
+                Log.d(TAG, "NativeAd loaded successfully.")
+                onAdLoaded(ad)
+            }
+            .withAdListener(object : com.google.android.gms.ads.AdListener() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    Log.w(TAG, "NativeAd failed to load: ${error.message}")
+                    onAdFailed(error)
+                }
+            })
+            .withNativeAdOptions(
+                NativeAdOptions.Builder().build()
+            )
+            .build()
+
+        adLoader.loadAd(AdRequest.Builder().build())
     }
 }

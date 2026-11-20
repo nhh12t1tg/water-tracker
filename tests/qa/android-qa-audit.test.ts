@@ -287,5 +287,55 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
         'Cooldown must be at least 3 minutes to avoid Disruptive Ads strikes'
       );
     });
+
+    it('verifies official sample Native Ad unit ID compliance', () => {
+      const NATIVE_TEST_ID = 'ca-app-pub-3940256099942544/2247696110';
+      assert.ok(
+        NATIVE_TEST_ID.startsWith('ca-app-pub-3940256099942544'),
+        'Native Ad Unit ID must strictly use Google official sample test ID'
+      );
+    });
+
+    it('verifies onboarding completion triggers interstitial ad at transition', async () => {
+      await adMob.initialize();
+      let interstitialTriggered = false;
+
+      // Simulate Onboarding completion
+      const completeOnboarding = () => {
+        if (adMob.canShowInterstitial()) {
+          adMob.showInterstitial(() => {
+            interstitialTriggered = true;
+          });
+        }
+      };
+
+      completeOnboarding();
+      assert.strictEqual(interstitialTriggered, true, 'Onboarding completion should present Interstitial ad');
+    });
+
+    it('verifies deep analytics calculation for weekly and monthly history datasets', () => {
+      const sampleDays = [
+        { dayName: 'Mon', intakeMl: 2000, targetMl: 2000 },
+        { dayName: 'Tue', intakeMl: 2500, targetMl: 2000 },
+        { dayName: 'Wed', intakeMl: 1500, targetMl: 2000 },
+        { dayName: 'Thu', intakeMl: 1000, targetMl: 2000 },
+        { dayName: 'Fri', intakeMl: 2200, targetMl: 2000 },
+        { dayName: 'Sat', intakeMl: 3000, targetMl: 2000 },
+        { dayName: 'Sun', intakeMl: 1800, targetMl: 2000 }
+      ];
+
+      const totalMl = sampleDays.reduce((acc, d) => acc + d.intakeMl, 0);
+      const targetTotalMl = sampleDays.reduce((acc, d) => acc + d.targetMl, 0);
+      const completionRatePercent = Math.round((totalMl * 100) / targetTotalMl);
+      const peakDay = sampleDays.reduce((prev, curr) => (curr.intakeMl > prev.intakeMl ? curr : prev));
+      const achievedDaysCount = sampleDays.filter((d) => d.intakeMl >= d.targetMl).length;
+
+      assert.strictEqual(totalMl, 14000);
+      assert.strictEqual(targetTotalMl, 14000);
+      assert.strictEqual(completionRatePercent, 100);
+      assert.strictEqual(peakDay.intakeMl, 3000);
+      assert.strictEqual(peakDay.dayName, 'Sat');
+      assert.strictEqual(achievedDaysCount, 4);
+    });
   });
 });

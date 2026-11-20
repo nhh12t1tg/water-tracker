@@ -256,7 +256,82 @@ class WaterRepository(context: Context) {
         return result
     }
 
+    fun getMonthlyHistory(): List<DayLogItem> {
+        val calendar = Calendar.getInstance()
+        val goal = getDailyGoalMl()
+        val result = mutableListOf<DayLogItem>()
+
+        for (i in 29 downTo 0) {
+            val cal = calendar.clone() as Calendar
+            cal.add(Calendar.DAY_OF_YEAR, -i)
+            val dateStr = dateFormat.format(cal.time)
+            val dayLabel = "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}"
+
+            val consumed = if (i == 0) {
+                getTodayConsumedMl()
+            } else {
+                prefs.getInt("history_$dateStr", 0)
+            }
+
+            result.add(
+                DayLogItem(
+                    dayName = dayLabel,
+                    intakeMl = consumed,
+                    targetMl = goal,
+                    isToday = (i == 0)
+                )
+            )
+        }
+        return result
+    }
+
+    fun calculateAnalytics(data: List<DayLogItem>): DetailedAnalytics {
+        val totalMl = data.sumOf { it.intakeMl }
+        val targetTotalMl = data.sumOf { it.targetMl }
+        val completionRate = if (targetTotalMl > 0) {
+            Math.round(totalMl.toFloat() * 100f / targetTotalMl.toFloat())
+        } else 0
+
+        var peakMl = 0
+        var peakName = ""
+        var achievedDays = 0
+
+        data.forEach { item ->
+            if (item.intakeMl > peakMl) {
+                peakMl = item.intakeMl
+                peakName = item.dayName
+            }
+            if (item.intakeMl >= item.targetMl && item.targetMl > 0) {
+                achievedDays++
+            }
+        }
+
+        val avg = if (data.isNotEmpty()) totalMl / data.size else 0
+
+        return DetailedAnalytics(
+            totalMl = totalMl,
+            targetTotalMl = targetTotalMl,
+            completionRatePercent = completionRate,
+            peakDayMl = peakMl,
+            peakDayName = peakName,
+            achievedDaysCount = achievedDays,
+            totalDaysCount = data.size,
+            averageDailyMl = avg
+        )
+    }
+
     fun resetForTesting() {
         prefs.edit().clear().apply()
     }
 }
+
+data class DetailedAnalytics(
+    val totalMl: Int,
+    val targetTotalMl: Int,
+    val completionRatePercent: Int,
+    val peakDayMl: Int,
+    val peakDayName: String,
+    val achievedDaysCount: Int,
+    val totalDaysCount: Int,
+    val averageDailyMl: Int
+)

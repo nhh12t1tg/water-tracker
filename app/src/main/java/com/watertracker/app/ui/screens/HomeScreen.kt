@@ -104,6 +104,12 @@ fun HomeScreen() {
                     currentMl = 0
                     streakDays = 0
                     currentScreen = AppScreen.HOME
+
+                    // Trigger 1 Interstitial ad on onboarding completion
+                    val act = context as? Activity
+                    if (act != null) {
+                        AdMobManager.showInterstitial(act) {}
+                    }
                 }
             )
         }
@@ -111,8 +117,12 @@ fun HomeScreen() {
             val weeklyData = remember(currentMl, strings) {
                 repository.getWeeklyHistory(strings.daysOfWeek)
             }
+            val monthlyData = remember(currentMl) {
+                repository.getMonthlyHistory()
+            }
             WeeklyHistoryScreen(
                 weeklyData = weeklyData,
+                monthlyData = monthlyData,
                 currentStreak = streakDays,
                 availableFreezes = availableFreezes,
                 strings = strings,
