@@ -63,6 +63,8 @@ class WaterRepository(context: Context) {
                 .putString("last_active_date", today)
                 .putInt("today_consumed_ml", 0)
                 .putBoolean("goal_dialog_shown_today", false)
+                .putBoolean("half_goal_ad_shown_today", false)
+                .putBoolean("achieved_today", false)
                 .apply()
         }
     }
@@ -112,6 +114,14 @@ class WaterRepository(context: Context) {
 
     fun setGoalDialogShownToday(shown: Boolean = true) {
         prefs.edit().putBoolean("goal_dialog_shown_today", shown).apply()
+    }
+
+    fun isHalfGoalAdShownToday(): Boolean {
+        return prefs.getBoolean("half_goal_ad_shown_today", false)
+    }
+
+    fun setHalfGoalAdShownToday(shown: Boolean = true) {
+        prefs.edit().putBoolean("half_goal_ad_shown_today", shown).apply()
     }
 
     fun getReminderIntervalMinutes(): Int {

@@ -158,8 +158,21 @@ fun HomeScreen() {
                     val newTotal = repository.addWaterLog(effectiveMl, effectiveMl)
                     currentMl = newTotal
                     streakDays = repository.getStreakDays()
+
+                    val halfGoal = targetMl / 2
+                    if (previousMl < halfGoal && newTotal >= halfGoal && !repository.isHalfGoalAdShownToday()) {
+                        repository.setHalfGoalAdShownToday(true)
+                        if (newTotal < targetMl) {
+                            val activity = context as? Activity
+                            if (activity != null) {
+                                AdMobManager.showInterstitial(activity) {}
+                            }
+                        }
+                    }
+
                     if (previousMl < targetMl && newTotal >= targetMl && !repository.isGoalDialogShownToday()) {
                         repository.setGoalDialogShownToday(true)
+                        repository.setHalfGoalAdShownToday(true)
                         showGoalDialog = true
                     }
                 },
@@ -170,6 +183,7 @@ fun HomeScreen() {
                 onGoalReached = {
                     if (!repository.isGoalDialogShownToday()) {
                         repository.setGoalDialogShownToday(true)
+                        repository.setHalfGoalAdShownToday(true)
                         showGoalDialog = true
                     }
                 },
@@ -188,8 +202,21 @@ fun HomeScreen() {
                         currentMl = newTotal
                         streakDays = repository.getStreakDays()
                         showCustomDialog = false
+
+                        val halfGoal = targetMl / 2
+                        if (previousMl < halfGoal && newTotal >= halfGoal && !repository.isHalfGoalAdShownToday()) {
+                            repository.setHalfGoalAdShownToday(true)
+                            if (newTotal < targetMl) {
+                                val activity = context as? Activity
+                                if (activity != null) {
+                                    AdMobManager.showInterstitial(activity) {}
+                                }
+                            }
+                        }
+
                         if (previousMl < targetMl && newTotal >= targetMl && !repository.isGoalDialogShownToday()) {
                             repository.setGoalDialogShownToday(true)
+                            repository.setHalfGoalAdShownToday(true)
                             showGoalDialog = true
                         }
                     }

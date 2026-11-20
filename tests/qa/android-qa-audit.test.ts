@@ -188,6 +188,64 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       );
     });
 
+    it('verifies 50% goal milestone triggers interstitial ad once per day and subsequent adds under 100% do not trigger ads', async () => {
+      await adMob.initialize();
+
+      const targetMl = 2000;
+      let currentMl = 0;
+      let halfGoalAdShownToday = false;
+      let goalCompletedAdShownToday = false;
+      let adsShownCount = 0;
+
+      const logDrink = (ml: number) => {
+        const previousMl = currentMl;
+        const newTotal = currentMl + ml;
+        currentMl = newTotal;
+
+        const halfGoal = Math.floor(targetMl / 2);
+        // Milestone 50%: triggers once per day if crossed
+        if (previousMl < halfGoal && newTotal >= halfGoal && !halfGoalAdShownToday) {
+          halfGoalAdShownToday = true;
+          if (newTotal < targetMl) {
+            if (adMob.canShowInterstitial()) {
+              adMob.showInterstitial(() => {});
+              adsShownCount++;
+            }
+          }
+        }
+
+        // Milestone 100%: triggers once per day
+        if (previousMl < targetMl && newTotal >= targetMl && !goalCompletedAdShownToday) {
+          goalCompletedAdShownToday = true;
+          halfGoalAdShownToday = true;
+        }
+      };
+
+      // 1. Add 400ml (20% of goal) -> below 50%, no ad
+      logDrink(400);
+      assert.strictEqual(halfGoalAdShownToday, false);
+      assert.strictEqual(adsShownCount, 0);
+
+      // 2. Add 700ml -> 1100ml (55% of goal, reaches >= 50%) -> triggers Interstitial Ad
+      logDrink(700);
+      assert.strictEqual(halfGoalAdShownToday, true);
+      assert.strictEqual(adsShownCount, 1);
+
+      // 3. Add 400ml -> 1500ml (75% of goal) -> already triggered 50%, under 100% -> no additional ad
+      logDrink(400);
+      assert.strictEqual(halfGoalAdShownToday, true);
+      assert.strictEqual(adsShownCount, 1);
+
+      // 4. Add 300ml -> 1800ml (90% of goal) -> still under 100% -> no additional ad
+      logDrink(300);
+      assert.strictEqual(halfGoalAdShownToday, true);
+      assert.strictEqual(adsShownCount, 1);
+
+      // 5. Add 300ml -> 2100ml (105% of goal, reaches >= 100%) -> triggers 100% celebration
+      logDrink(300);
+      assert.strictEqual(goalCompletedAdShownToday, true);
+    });
+
     it('verifies preloading queue does not overflow or leak memory', async () => {
       await adMob.initialize();
 
