@@ -58,14 +58,6 @@
         </receiver>
 
         <receiver
-            android:name=".notification.QuickAddReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.watertracker.app.ACTION_QUICK_ADD_250" />
-            </intent-filter>
-        </receiver>
-
-        <receiver
             android:name=".notification.BootReceiver"
             android:exported="true">
             <intent-filter>

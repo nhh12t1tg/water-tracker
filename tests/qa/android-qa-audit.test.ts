@@ -466,38 +466,32 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       }
     });
 
-    it('verifies notification strings and quick-add action across all 5 languages', () => {
+    it('verifies notification strings across all 5 languages', () => {
       const notificationStrings = {
         vi: {
           title: 'Đã đến giờ uống nước! 💧',
-          body: (pct: number) => `Bạn đã đạt ${pct}% mục tiêu hôm nay. Uống một ngụm nước để giữ sức khỏe nhé!`,
-          quickAdd: '+250ml Nước'
+          body: (pct: number) => `Bạn đã đạt ${pct}% mục tiêu hôm nay. Uống một ngụm nước để giữ sức khỏe nhé!`
         },
         en: {
           title: 'Time to drink water! 💧',
-          body: (pct: number) => `You have reached ${pct}% of your daily goal. Take a sip to stay refreshed!`,
-          quickAdd: '+250ml Water'
+          body: (pct: number) => `You have reached ${pct}% of your daily goal. Take a sip to stay refreshed!`
         },
         es: {
           title: '¡Hora de beber agua! 💧',
-          body: (pct: number) => `Has alcanzado el ${pct}% de tu meta diaria. ¡Toma un sorbo para mantenerte hidratado!`,
-          quickAdd: '+250ml Agua'
+          body: (pct: number) => `Has alcanzado el ${pct}% de tu meta diaria. ¡Toma un sorbo para mantenerte hidratado!`
         },
         ja: {
           title: '水分補給の時間です！ 💧',
-          body: (pct: number) => `今日の目標の${pct}%を達成しました。水分をとってリフレッシュしましょう！`,
-          quickAdd: '+250ml 水'
+          body: (pct: number) => `今日の目標の${pct}%を達成しました。水分をとってリフレッシュしましょう！`
         },
         de: {
           title: 'Zeit, Wasser zu trinken! 💧',
-          body: (pct: number) => `Du hast ${pct}% deines Tagesziels erreicht. Nimm einen Schluck, um fit zu bleiben!`,
-          quickAdd: '+250ml Wasser'
+          body: (pct: number) => `Du hast ${pct}% deines Tagesziels erreicht. Nimm einen Schluck, um fit zu bleiben!`
         }
       };
 
       for (const [lang, item] of Object.entries(notificationStrings)) {
         assert.ok(item.title.length > 0, `Missing notification title for ${lang}`);
-        assert.ok(item.quickAdd.length > 0, `Missing quick-add action for ${lang}`);
         assert.ok(item.body(50).includes('50%'), `Notification body must format percent correctly in ${lang}`);
       }
     });

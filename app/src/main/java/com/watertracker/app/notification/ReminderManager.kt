@@ -19,9 +19,7 @@ object ReminderManager {
     const val CHANNEL_ID = "hydration_reminders_channel"
     const val NOTIFICATION_ID = 1001
     const val ACTION_REMIND_HYDRATION = "com.watertracker.app.ACTION_REMIND_HYDRATION"
-    const val ACTION_QUICK_ADD_250 = "com.watertracker.app.ACTION_QUICK_ADD_250"
     private const val REQUEST_CODE_ALARM = 2001
-    private const val REQUEST_CODE_ACTION = 2002
 
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -194,17 +192,6 @@ object ReminderManager {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Action intent: +250ml quick add directly from notification bar
-        val quickAddIntent = Intent(context, QuickAddReceiver::class.java).apply {
-            action = ACTION_QUICK_ADD_250
-        }
-        val quickAddPendingIntent = PendingIntent.getBroadcast(
-            context,
-            REQUEST_CODE_ACTION,
-            quickAddIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(android.R.drawable.ic_popup_reminder)
             .setContentTitle(strings.notificationTitle)
@@ -214,11 +201,6 @@ object ReminderManager {
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .setContentIntent(contentPendingIntent)
             .setAutoCancel(true)
-            .addAction(
-                android.R.drawable.ic_input_add,
-                strings.notificationQuickAddAction,
-                quickAddPendingIntent
-            )
             .build()
 
         try {
