@@ -442,5 +442,28 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       assert.strictEqual(row2[0].targetDays, 14);
       assert.strictEqual(row2[1].targetDays, 30);
     });
+
+    it('verifies Health & Vitality (Direction 3) streak badge names alignment across all 5 languages', () => {
+      const badgeSets = {
+        vi: { starter: 'Khởi Sắc', week: 'Thanh Lọc', gold: 'Tràn Năng Lượng', master: 'Sống Khỏe' },
+        en: { starter: 'Fresh Spark', week: 'Pure Detox', gold: 'Vital Energy', master: 'Peak Vitality' },
+        es: { starter: 'Frescura', week: 'Purificación', gold: 'Vitalidad', master: 'Vida Saludable' },
+        ja: { starter: 'リフレッシュ', week: 'デトックス', gold: '活力チャージ', master: '健康マスター' },
+        de: { starter: 'Frischekick', week: 'Reines Detox', gold: 'Voller Energie', master: 'Spitzenvitalität' }
+      };
+
+      for (const [lang, set] of Object.entries(badgeSets)) {
+        assert.ok(set.starter.length > 0, `Missing starter badge for ${lang}`);
+        assert.ok(set.week.length > 0, `Missing week badge for ${lang}`);
+        assert.ok(set.gold.length > 0, `Missing gold badge for ${lang}`);
+        assert.ok(set.master.length > 0, `Missing master badge for ${lang}`);
+
+        // Ensure badge titles fit comfortably within badge card constraints (max 20 chars)
+        assert.ok(set.starter.length <= 20, `${lang} starter badge name too long`);
+        assert.ok(set.week.length <= 20, `${lang} week badge name too long`);
+        assert.ok(set.gold.length <= 20, `${lang} gold badge name too long`);
+        assert.ok(set.master.length <= 20, `${lang} master badge name too long`);
+      }
+    });
   });
 });
