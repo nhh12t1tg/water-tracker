@@ -164,7 +164,7 @@ val EnglishStrings = Strings(
     manage = "Manage",
 
     motivationDefault = "Take small, regular sips for optimal cellular hydration",
-    motivationGoalReached = "Outstanding! You reached today's hydration target 🎉",
+    motivationGoalReached = "Outstanding! You reached today's hydration target",
     progressFormat = { current, target -> "$current / $target ml" },
 
     quickAdd150 = "+150ml",
@@ -287,7 +287,7 @@ val VietnameseStrings = Strings(
     manage = "Quản lý",
 
     motivationDefault = "Hãy uống từng ngụm nhỏ để cơ thể hấp thụ tốt nhất",
-    motivationGoalReached = "Tuyệt vời! Bạn đã đủ nước hôm nay 🎉",
+    motivationGoalReached = "Tuyệt vời! Bạn đã đủ nước hôm nay",
     progressFormat = { current, target -> "$current / $target ml" },
 
     quickAdd150 = "+150ml",
@@ -410,7 +410,7 @@ val SpanishStrings = Strings(
     manage = "Gestionar",
 
     motivationDefault = "Bebe a pequeños sorbos para una hidratación celular óptima",
-    motivationGoalReached = "¡Excelente! Has alcanzado tu objetivo de hoy 🎉",
+    motivationGoalReached = "¡Excelente! Has alcanzado tu objetivo de hoy",
     progressFormat = { current, target -> "$current / $target ml" },
 
     quickAdd150 = "+150ml",
@@ -533,7 +533,7 @@ val JapaneseStrings = Strings(
     manage = "管理",
 
     motivationDefault = "細胞が効果的に水分を吸収できるよう、少しずつ飲みましょう",
-    motivationGoalReached = "素晴らしい！今日の水分補給目標を達成しました 🎉",
+    motivationGoalReached = "素晴らしい！今日の水分補給目標を達成しました",
     progressFormat = { current, target -> "$current / $target ml" },
 
     quickAdd150 = "+150ml",
@@ -656,7 +656,7 @@ val GermanStrings = Strings(
     manage = "Verwalten",
 
     motivationDefault = "Trinken Sie kleine Schlucke für optimale Flüssigkeitsaufnahme",
-    motivationGoalReached = "Hervorragend! Sie haben Ihr Tagesziel erreicht 🎉",
+    motivationGoalReached = "Hervorragend! Sie haben Ihr Tagesziel erreicht",
     progressFormat = { current, target -> "$current / $target ml" },
 
     quickAdd150 = "+150ml",

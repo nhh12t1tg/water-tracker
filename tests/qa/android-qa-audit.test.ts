@@ -167,7 +167,7 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       // 2. Log drink +500ml -> 2250ml (achieves 100% goal)
       logDrink(500);
       assert.strictEqual(celebrationTriggered, true, '100% goal must trigger celebration');
-      assert.strictEqual(getMotivationSubtitle(currentMl, targetMl), 'Tuyệt vời! Bạn đã đủ nước hôm nay 🎉');
+      assert.strictEqual(getMotivationSubtitle(currentMl, targetMl), 'Tuyệt vời! Bạn đã đủ nước hôm nay');
 
       // 3. User views Congratulation Dialog and taps "Tuyệt vời, tiếp tục!" -> Shows Interstitial Ad
       assert.strictEqual(adMob.canShowInterstitial(), true, 'Ad must be preloaded and ready at natural transition');

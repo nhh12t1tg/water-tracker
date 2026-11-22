@@ -11,7 +11,7 @@ export const ADMOB_BANNER_TOUCH_PADDING_DP = 16;
  */
 export function getMotivationSubtitle(currentMl: number, targetMl: number): string {
   if (targetMl > 0 && currentMl >= targetMl) {
-    return 'Tuyệt vời! Bạn đã đủ nước hôm nay 🎉';
+    return 'Tuyệt vời! Bạn đã đủ nước hôm nay';
   }
   return 'Hãy uống từng ngụm nhỏ để cơ thể hấp thụ tốt nhất';
 }
