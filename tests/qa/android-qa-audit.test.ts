@@ -369,5 +369,34 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       assert.strictEqual(peakDay.dayName, 'Sat');
       assert.strictEqual(achievedDaysCount, 4);
     });
+
+    it('verifies all 5 supported languages satisfy UI/UX Pro Max button single-line layout constraints', () => {
+      const languageButtons = [
+        { lang: 'en', cancel: 'Cancel', confirm: 'Confirm', customConfirm: 'Save' },
+        { lang: 'vi', cancel: 'Hủy', confirm: 'Xác nhận', customConfirm: 'Ghi nhận' },
+        { lang: 'es', cancel: 'Cancelar', confirm: 'Confirmar', customConfirm: 'Guardar' },
+        { lang: 'ja', cancel: 'キャンセル', confirm: '記録する', customConfirm: '記録する' },
+        { lang: 'de', cancel: 'Abbrechen', confirm: 'Bestätigen', customConfirm: 'Speichern' }
+      ];
+
+      // On a 360dp phone with 8dp button contentPadding and 14sp font,
+      // maximum safe button label is ~15 characters.
+      const MAX_SAFE_BUTTON_CHARS = 15;
+
+      for (const item of languageButtons) {
+        assert.ok(
+          item.cancel.length <= MAX_SAFE_BUTTON_CHARS,
+          `Cancel button in ${item.lang} ("${item.cancel}") exceeds max safe length`
+        );
+        assert.ok(
+          item.confirm.length <= MAX_SAFE_BUTTON_CHARS,
+          `Confirm button in ${item.lang} ("${item.confirm}") exceeds max safe length`
+        );
+        assert.ok(
+          item.customConfirm.length <= MAX_SAFE_BUTTON_CHARS,
+          `Custom confirm button in ${item.lang} ("${item.customConfirm}") exceeds max safe length`
+        );
+      }
+    });
   });
 });

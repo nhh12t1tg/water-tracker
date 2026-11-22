@@ -544,7 +544,7 @@ fun HomeScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 4.dp),
+                            .padding(horizontal = 10.dp),
                         shape = RoundedCornerShape(28.dp),
                         colors = CardDefaults.cardColors(
                             containerColor = if (isDark) DeepBlueCard else Color.White
@@ -554,7 +554,7 @@ fun HomeScreen(
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(24.dp),
+                                .padding(horizontal = 20.dp, vertical = 22.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(14.dp)
                         ) {
@@ -571,7 +571,7 @@ fun HomeScreen(
 
                             // Title
                             Text(
-                                text = if (isVi) "Xác nhận uống nước" else "Confirm Intake",
+                                text = strings.quickAddConfirmTitle,
                                 style = MaterialTheme.typography.titleLarge.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onBackground
@@ -597,11 +597,7 @@ fun HomeScreen(
 
                             // Body text
                             Text(
-                                text = if (isVi) {
-                                    "Bạn có muốn ghi nhận $volume ml ${selectedBeverage.name} vào mục tiêu hôm nay không?"
-                                } else {
-                                    "Log $volume ml of ${selectedBeverage.name} to today's hydration target?"
-                                },
+                                text = strings.quickAddConfirmDesc(volume, selectedBeverage.name),
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 ),
@@ -611,10 +607,10 @@ fun HomeScreen(
 
                             Spacer(modifier = Modifier.height(4.dp))
 
-                            // BALANCED 2-BUTTON ROW (Equal 50/50 width, 48dp height, high contrast)
+                            // BALANCED 2-BUTTON ROW (Equal 50/50 width, 48dp touch target, high contrast, non-wrapping)
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 // Cancel Button: Distinct neutral solid slate background, high contrast text
@@ -623,6 +619,7 @@ fun HomeScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(48.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0),
                                         contentColor = if (isDark) Color(0xFFF1F5F9) else Color(0xFF334155)
@@ -633,7 +630,10 @@ fun HomeScreen(
                                     Text(
                                         text = strings.cancel,
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
+                                        fontSize = 14.sp,
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
 
@@ -654,6 +654,7 @@ fun HomeScreen(
                                     modifier = Modifier
                                         .weight(1f)
                                         .height(48.dp),
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = CyanPrimary,
                                         contentColor = Color.White
@@ -662,9 +663,12 @@ fun HomeScreen(
                                     elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
                                 ) {
                                     Text(
-                                        text = if (isVi) "Xác nhận" else "Confirm",
+                                        text = strings.quickAddConfirmButton,
                                         fontWeight = FontWeight.Bold,
-                                        fontSize = 15.sp
+                                        fontSize = 14.sp,
+                                        maxLines = 1,
+                                        softWrap = false,
+                                        overflow = TextOverflow.Ellipsis
                                     )
                                 }
                             }

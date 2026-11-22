@@ -42,6 +42,9 @@ data class Strings(
     val quickAdd500: String,
     val quickAddCustom: String,
     val themesButton: String,
+    val quickAddConfirmTitle: String,
+    val quickAddConfirmDesc: (Int, String) -> String,
+    val quickAddConfirmButton: String,
 
     // Beverages
     val beverageWater: String,
@@ -147,6 +150,9 @@ val EnglishStrings = Strings(
     quickAdd500 = "+500ml",
     quickAddCustom = "+ Other",
     themesButton = "Themes",
+    quickAddConfirmTitle = "Confirm Intake",
+    quickAddConfirmDesc = { volume, beverage -> "Log $volume ml of $beverage to today's hydration target?" },
+    quickAddConfirmButton = "Confirm",
 
     beverageWater = "Water",
     beverageTea = "Tea",
@@ -247,6 +253,9 @@ val VietnameseStrings = Strings(
     quickAdd500 = "+500ml",
     quickAddCustom = "+ Khác",
     themesButton = "Màu Nước",
+    quickAddConfirmTitle = "Xác nhận uống nước",
+    quickAddConfirmDesc = { volume, beverage -> "Bạn có muốn ghi nhận $volume ml $beverage vào mục tiêu hôm nay không?" },
+    quickAddConfirmButton = "Xác nhận",
 
     beverageWater = "Nước lọc",
     beverageTea = "Trà",
@@ -347,6 +356,9 @@ val SpanishStrings = Strings(
     quickAdd500 = "+500ml",
     quickAddCustom = "+ Otro",
     themesButton = "Temas",
+    quickAddConfirmTitle = "Confirmar consumo",
+    quickAddConfirmDesc = { volume, beverage -> "¿Deseas registrar $volume ml de $beverage para tu meta de hoy?" },
+    quickAddConfirmButton = "Confirmar",
 
     beverageWater = "Agua",
     beverageTea = "Té",
@@ -447,6 +459,9 @@ val JapaneseStrings = Strings(
     quickAdd500 = "+500ml",
     quickAddCustom = "+ その他",
     themesButton = "テーマ",
+    quickAddConfirmTitle = "水分補給の確認",
+    quickAddConfirmDesc = { volume, beverage -> "今日の目標に $volume ml の ${beverage} を記録しますか？" },
+    quickAddConfirmButton = "記録する",
 
     beverageWater = "水",
     beverageTea = "お茶",
@@ -547,6 +562,9 @@ val GermanStrings = Strings(
     quickAdd500 = "+500ml",
     quickAddCustom = "+ Mehr",
     themesButton = "Farben",
+    quickAddConfirmTitle = "Trinken bestätigen",
+    quickAddConfirmDesc = { volume, beverage -> "Möchten Sie $volume ml $beverage für das heutige Ziel eintragen?" },
+    quickAddConfirmButton = "Bestätigen",
 
     beverageWater = "Wasser",
     beverageTea = "Tee",

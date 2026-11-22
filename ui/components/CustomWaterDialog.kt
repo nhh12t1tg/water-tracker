@@ -15,6 +15,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -155,10 +156,10 @@ fun CustomWaterDialog(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                // BALANCED 2-BUTTON ROW (Equal 50/50 width, 48dp height, high contrast)
+                // BALANCED 2-BUTTON ROW (Equal 50/50 width, 48dp height, high contrast, non-wrapping)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     // Cancel Button: Neutral solid slate grey background, high contrast text
@@ -167,6 +168,7 @@ fun CustomWaterDialog(
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0),
                             contentColor = if (isDark) Color(0xFFF1F5F9) else Color(0xFF334155)
@@ -177,7 +179,10 @@ fun CustomWaterDialog(
                         Text(
                             text = strings.cancel,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
 
@@ -192,6 +197,7 @@ fun CustomWaterDialog(
                         modifier = Modifier
                             .weight(1f)
                             .height(48.dp),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 0.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = CyanPrimary,
                             contentColor = Color.White,
@@ -204,7 +210,10 @@ fun CustomWaterDialog(
                         Text(
                             text = strings.confirm,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp
+                            fontSize = 14.sp,
+                            maxLines = 1,
+                            softWrap = false,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
