@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.watertracker.app.ads.AdMobManager
 import com.watertracker.app.data.WaterRepository
+import com.watertracker.app.notification.ReminderManager
 import com.watertracker.app.ui.components.*
 import com.watertracker.app.ui.i18n.EnglishStrings
 import com.watertracker.app.ui.i18n.LocalizationManager
@@ -110,6 +111,9 @@ fun HomeScreen() {
                     currentMl = 0
                     streakDays = 0
                     currentScreen = AppScreen.HOME
+
+                    // Activate and schedule smart hydration reminders
+                    ReminderManager.scheduleNextReminder(context)
 
                     // Trigger 1 Interstitial ad on onboarding completion
                     val act = context as? Activity
@@ -199,6 +203,13 @@ fun HomeScreen() {
                             }
                         }
                     }
+
+                    // Smart reminder update: If 100% achieved, cancel reminders for today; else reschedule smart delay
+                    if (newTotal >= targetMl && targetMl > 0) {
+                        ReminderManager.cancelAllReminders(context)
+                    } else {
+                        ReminderManager.scheduleNextReminder(context)
+                    }
                 },
                 onOpenCustomDialog = { showCustomDialog = true },
                 onOpenThemeReward = { showThemeDialog = true },
@@ -250,6 +261,13 @@ fun HomeScreen() {
                                     AdMobManager.showInterstitial(activity) {}
                                 }
                             }
+                        }
+
+                        // Smart reminder update: If 100% achieved, cancel reminders for today; else reschedule smart delay
+                        if (newTotal >= targetMl && targetMl > 0) {
+                            ReminderManager.cancelAllReminders(context)
+                        } else {
+                            ReminderManager.scheduleNextReminder(context)
                         }
                     }
                 )

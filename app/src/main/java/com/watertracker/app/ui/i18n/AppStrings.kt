@@ -144,7 +144,12 @@ data class Strings(
     val badgeGoldDays: String,
     val badgeMaster: String,
     val badgeMasterDays: String,
-    val daysOfWeek: List<String>
+    val daysOfWeek: List<String>,
+
+    // Hydration Reminders Notification
+    val notificationTitle: String,
+    val notificationBody: (Int) -> String,
+    val notificationQuickAddAction: String
 )
 
 val EnglishStrings = Strings(
@@ -264,7 +269,10 @@ val EnglishStrings = Strings(
     badgeGoldDays = "14 days",
     badgeMaster = "Peak Vitality",
     badgeMasterDays = "30 days",
-    daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+    daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"),
+    notificationTitle = "💧 Time to hydrate!",
+    notificationBody = { percent -> "You're at $percent% of your goal today. Take a refreshing sip of water!" },
+    notificationQuickAddAction = "+250ml Water"
 )
 
 val VietnameseStrings = Strings(
@@ -384,7 +392,10 @@ val VietnameseStrings = Strings(
     badgeGoldDays = "14 ngày",
     badgeMaster = "Sống Khỏe",
     badgeMasterDays = "30 ngày",
-    daysOfWeek = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN")
+    daysOfWeek = listOf("T2", "T3", "T4", "T5", "T6", "T7", "CN"),
+    notificationTitle = "💧 Đến giờ uống nước rồi!",
+    notificationBody = { percent -> "Hôm nay bạn đã đạt $percent% mục tiêu. Hãy uống một ngụm nước để cơ thể luôn tươi tỉnh nhé!" },
+    notificationQuickAddAction = "+250ml Nước"
 )
 
 val SpanishStrings = Strings(
@@ -504,7 +515,10 @@ val SpanishStrings = Strings(
     badgeGoldDays = "14 días",
     badgeMaster = "Vida Saludable",
     badgeMasterDays = "30 días",
-    daysOfWeek = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom")
+    daysOfWeek = listOf("Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"),
+    notificationTitle = "💧 ¡Hora de hidratarse!",
+    notificationBody = { percent -> "Has alcanzado el $percent% de tu objetivo hoy. ¡Toma un sorbo refrescante de agua!" },
+    notificationQuickAddAction = "+250ml Agua"
 )
 
 val JapaneseStrings = Strings(
@@ -624,7 +638,10 @@ val JapaneseStrings = Strings(
     badgeGoldDays = "14日",
     badgeMaster = "健康マスター",
     badgeMasterDays = "30日",
-    daysOfWeek = listOf("月", "火", "水", "木", "金", "土", "日")
+    daysOfWeek = listOf("月", "火", "水", "木", "金", "土", "日"),
+    notificationTitle = "💧 水分補給の時間です！",
+    notificationBody = { percent -> "今日の目標の $percent% を達成しました。一口水を飲んでリフレッシュしましょう！" },
+    notificationQuickAddAction = "+250ml 水"
 )
 
 val GermanStrings = Strings(
@@ -744,7 +761,10 @@ val GermanStrings = Strings(
     badgeGoldDays = "14 Tage",
     badgeMaster = "Spitzenvitalität",
     badgeMasterDays = "30 Tage",
-    daysOfWeek = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So")
+    daysOfWeek = listOf("Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"),
+    notificationTitle = "💧 Zeit für ein Glas Wasser!",
+    notificationBody = { percent -> "Sie haben heute $percent% Ihres Ziels erreicht. Trinken Sie einen erfrischenden Schluck!" },
+    notificationQuickAddAction = "+250ml Wasser"
 )
 
 object LocalizationManager {

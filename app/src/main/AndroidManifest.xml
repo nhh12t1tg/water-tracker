@@ -10,6 +10,9 @@
     
     <!-- 3. POST_NOTIFICATIONS: Required on Android 13+ (API 33+) for hydration reminders -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    
+    <!-- 4. RECEIVE_BOOT_COMPLETED: Reschedule alarms after device reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <!-- Google Play Compliance Notice: Zero invasive permissions (No Location, No Camera, No Storage) -->
 
@@ -44,6 +47,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Hydration Reminder Broadcast Receivers -->
+        <receiver
+            android:name=".notification.ReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.watertracker.app.ACTION_REMIND_HYDRATION" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".notification.QuickAddReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.watertracker.app.ACTION_QUICK_ADD_250" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".notification.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

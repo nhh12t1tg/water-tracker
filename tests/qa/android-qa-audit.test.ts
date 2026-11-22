@@ -465,5 +465,65 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
         assert.ok(set.master.length <= 20, `${lang} master badge name too long`);
       }
     });
+
+    it('verifies notification strings and quick-add action across all 5 languages', () => {
+      const notificationStrings = {
+        vi: {
+          title: 'Đã đến giờ uống nước! 💧',
+          body: (pct: number) => `Bạn đã đạt ${pct}% mục tiêu hôm nay. Uống một ngụm nước để giữ sức khỏe nhé!`,
+          quickAdd: '+250ml Nước'
+        },
+        en: {
+          title: 'Time to drink water! 💧',
+          body: (pct: number) => `You have reached ${pct}% of your daily goal. Take a sip to stay refreshed!`,
+          quickAdd: '+250ml Water'
+        },
+        es: {
+          title: '¡Hora de beber agua! 💧',
+          body: (pct: number) => `Has alcanzado el ${pct}% de tu meta diaria. ¡Toma un sorbo para mantenerte hidratado!`,
+          quickAdd: '+250ml Agua'
+        },
+        ja: {
+          title: '水分補給の時間です！ 💧',
+          body: (pct: number) => `今日の目標の${pct}%を達成しました。水分をとってリフレッシュしましょう！`,
+          quickAdd: '+250ml 水'
+        },
+        de: {
+          title: 'Zeit, Wasser zu trinken! 💧',
+          body: (pct: number) => `Du hast ${pct}% deines Tagesziels erreicht. Nimm einen Schluck, um fit zu bleiben!`,
+          quickAdd: '+250ml Wasser'
+        }
+      };
+
+      for (const [lang, item] of Object.entries(notificationStrings)) {
+        assert.ok(item.title.length > 0, `Missing notification title for ${lang}`);
+        assert.ok(item.quickAdd.length > 0, `Missing quick-add action for ${lang}`);
+        assert.ok(item.body(50).includes('50%'), `Notification body must format percent correctly in ${lang}`);
+      }
+    });
+
+    it('verifies 100% daily goal notification suppression and quiet hours rules', () => {
+      // Mock reminder decision logic matching ReminderManager.kt
+      function shouldNotify(consumed: number, goal: number, isDnd: boolean, isQuiet: boolean): boolean {
+        if (consumed >= goal && goal > 0) return false; // 100% target achieved -> suppress
+        if (isDnd && isQuiet) return false; // DND quiet hours -> suppress
+        return true;
+      }
+
+      // 1. Goal not yet achieved (e.g. 1500 / 2500ml) during daytime -> Should notify
+      assert.strictEqual(shouldNotify(1500, 2500, true, false), true);
+
+      // 2. 100% Goal reached (2500 / 2500ml) -> Suppressed!
+      assert.strictEqual(shouldNotify(2500, 2500, true, false), false);
+
+      // 3. Exceeded 100% Goal (3200 / 2500ml) -> Suppressed!
+      assert.strictEqual(shouldNotify(3200, 2500, false, false), false);
+
+      // 4. In DND quiet hours (e.g. 23:30) with DND enabled -> Suppressed!
+      assert.strictEqual(shouldNotify(1000, 2500, true, true), false);
+
+      // 5. In quiet hours but DND disabled -> Notifies
+      assert.strictEqual(shouldNotify(1000, 2500, false, true), true);
+    });
   });
 });

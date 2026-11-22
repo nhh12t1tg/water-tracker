@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.watertracker.app.data.WaterRepository
+import com.watertracker.app.notification.ReminderManager
 import com.watertracker.app.ui.components.NativeAdCard
 import com.watertracker.app.ui.i18n.EnglishStrings
 import com.watertracker.app.ui.i18n.Strings
@@ -80,9 +81,11 @@ fun SettingsScreen(
                 if (isWakeUp) {
                     wakeUpTime = formatted
                     repository.setWakeUpTime(formatted)
+                    ReminderManager.scheduleNextReminder(context)
                 } else {
                     bedTime = formatted
                     repository.setBedTime(formatted)
+                    ReminderManager.scheduleNextReminder(context)
                 }
             },
             initialHour,
@@ -228,6 +231,7 @@ fun SettingsScreen(
                                 onClick = {
                                     intervalMinutes = mins
                                     repository.setReminderIntervalMinutes(mins)
+                                    ReminderManager.scheduleNextReminder(context)
                                 },
                                 modifier = Modifier.weight(1f),
                                 label = {
@@ -271,6 +275,7 @@ fun SettingsScreen(
                             onCheckedChange = {
                                 isDndEnabled = it
                                 repository.setDndEnabled(it)
+                                ReminderManager.scheduleNextReminder(context)
                             }
                         )
                     }
