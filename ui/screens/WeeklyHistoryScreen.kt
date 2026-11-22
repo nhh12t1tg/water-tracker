@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -106,7 +107,6 @@ fun WeeklyHistoryScreen(
     strings: Strings = EnglishStrings
 ) {
     val isDark = isSystemInDarkTheme()
-    val isVi = strings.cancel == "Hủy"
 
     // Primary Card background (Pure white in light mode, Deep slate in dark mode)
     val cardBackground = if (isDark) DeepBlueCard else Color.White
@@ -185,7 +185,7 @@ fun WeeklyHistoryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (isVi) "📅 7 Ngày" else "📅 7 Days",
+                        text = strings.historyTabWeek,
                         fontWeight = if (isSelected0) FontWeight.ExtraBold else FontWeight.Medium,
                         color = if (isSelected0) {
                             if (isDark) Color(0xFF38BDF8) else CyanPrimary
@@ -217,7 +217,7 @@ fun WeeklyHistoryScreen(
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = if (isVi) "📊 30 Ngày" else "📊 30 Days",
+                        text = strings.historyTabMonth,
                         fontWeight = if (isSelected1) FontWeight.ExtraBold else FontWeight.Medium,
                         color = if (isSelected1) {
                             if (isDark) Color(0xFF38BDF8) else CyanPrimary
@@ -264,18 +264,14 @@ fun WeeklyHistoryScreen(
                         }
                         Column {
                             Text(
-                                text = if (isVi) "Báo Cáo Phân Tích Chuyên Sâu" else "Deep Hydration Analytics",
+                                text = strings.historyAnalyticsTitle,
                                 style = MaterialTheme.typography.titleMedium.copy(
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             )
                             Text(
-                                text = if (selectedTab == 0) {
-                                    if (isVi) "Tổng kết chi tiết chu kỳ 7 ngày" else "7-day cycle comprehensive breakdown"
-                                } else {
-                                    if (isVi) "Tổng kết chi tiết chu kỳ 30 ngày" else "30-day monthly comprehensive breakdown"
-                                },
+                                text = strings.historyAnalyticsSubtitle(selectedTab == 0),
                                 fontSize = 12.sp,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -291,7 +287,7 @@ fun WeeklyHistoryScreen(
                         // Metric 1: Total Intake (Sky Tint)
                         PastelMetricBox(
                             modifier = Modifier.weight(1f),
-                            title = if (isVi) "Tổng nạp" else "Total Intake",
+                            title = strings.historyTotalIntake,
                             value = "${String.format(Locale.US, "%.1f", analytics.totalMl / 1000f)} L",
                             subtitle = "${analytics.totalMl} ml",
                             bgLight = Color(0xFFF0F9FF), // Sky 50
@@ -303,9 +299,9 @@ fun WeeklyHistoryScreen(
                         // Metric 2: Completion Rate (Emerald Tint)
                         PastelMetricBox(
                             modifier = Modifier.weight(1f),
-                            title = if (isVi) "Đạt chuẩn" else "Target Rate",
+                            title = strings.historyTargetRate,
                             value = "${analytics.completionRatePercent}%",
-                            subtitle = if (analytics.completionRatePercent >= 100) (if (isVi) "Vượt mục tiêu" else "Exceeded") else (if (isVi) "Tiến độ chuẩn" else "On track"),
+                            subtitle = if (analytics.completionRatePercent >= 100) strings.historyTargetRateExceeded else strings.historyTargetRateOnTrack,
                             bgLight = Color(0xFFF0FDF4), // Emerald 50
                             borderLight = Color(0xFFBBF7D0), // Emerald 200
                             accentColor = if (analytics.completionRatePercent >= 100) Color(0xFFD97706) else Color(0xFF16A34A),
@@ -320,9 +316,9 @@ fun WeeklyHistoryScreen(
                         // Metric 3: Peak Day (Amber Tint)
                         PastelMetricBox(
                             modifier = Modifier.weight(1f),
-                            title = if (isVi) "Kỷ lục ngày" else "Peak Day",
+                            title = strings.historyPeakDay,
                             value = "${analytics.peakDayMl} ml",
-                            subtitle = if (analytics.peakDayName.isNotEmpty()) (if (isVi) "Ngày: ${analytics.peakDayName}" else "Day: ${analytics.peakDayName}") else "-",
+                            subtitle = if (analytics.peakDayName.isNotEmpty()) strings.historyPeakDayFormat(analytics.peakDayName) else "-",
                             bgLight = Color(0xFFFFFBEB), // Amber 50
                             borderLight = Color(0xFFFDE68A), // Amber 200
                             accentColor = Color(0xFFD97706),
@@ -332,9 +328,9 @@ fun WeeklyHistoryScreen(
                         // Metric 4: Goal Days Met (Indigo Tint)
                         PastelMetricBox(
                             modifier = Modifier.weight(1f),
-                            title = if (isVi) "Số ngày đạt" else "Goals Met",
+                            title = strings.historyGoalsMet,
                             value = "${analytics.achievedDaysCount} / ${analytics.totalDaysCount}",
-                            subtitle = if (isVi) "ngày hoàn thành" else "days achieved",
+                            subtitle = strings.historyDaysAchievedSubtitle,
                             bgLight = Color(0xFFEEF2FF), // Indigo 50
                             borderLight = Color(0xFFC7D2FE), // Indigo 200
                             accentColor = Color(0xFF4F46E5),
@@ -344,18 +340,9 @@ fun WeeklyHistoryScreen(
 
                     // Smart Health Habit Encouragement Pill (High Contrast Soft Banner)
                     val feedbackText = when {
-                        analytics.completionRatePercent >= 80 -> {
-                            if (isVi) "🌟 Phong độ xuất sắc! Bạn duy trì thói quen uống nước rất đều đặn và khoa học."
-                            else "🌟 Outstanding! You maintain a remarkably consistent and healthy hydration habit."
-                        }
-                        analytics.completionRatePercent >= 50 -> {
-                            if (isVi) "💧 Tiến độ rất tốt! Hãy tiếp tục duy trì và phân bổ đều lượng nước trong ngày nhé."
-                            else "💧 Great progress! Keep pacing your water intake evenly throughout the day."
-                        }
-                        else -> {
-                            if (isVi) "⚡ Hãy chú ý bổ sung nước thường xuyên hơn để cơ thể luôn tràn đầy năng lượng nhé!"
-                            else "⚡ Remember to drink more water regularly to stay energized and focused!"
-                        }
+                        analytics.completionRatePercent >= 80 -> strings.historyInsightExcellent
+                        analytics.completionRatePercent >= 50 -> strings.historyInsightGood
+                        else -> strings.historyInsightEncourage
                     }
 
                     Box(
@@ -396,7 +383,7 @@ fun WeeklyHistoryScreen(
                         text = if (selectedTab == 0) {
                             strings.historyChartTitle
                         } else {
-                            if (isVi) "Biểu Đồ 30 Ngày" else "30-Day Hydration Chart"
+                            strings.historyMonthChartTitle
                         },
                         style = MaterialTheme.typography.titleMedium.copy(
                             fontWeight = FontWeight.Bold,
@@ -442,7 +429,7 @@ fun WeeklyHistoryScreen(
 
             // 4. GOOGLE ADMOB NATIVE AD CARD (QUẢNG CÁO TỰ NHIÊN)
             NativeAdCard(
-                adSponsoredLabel = if (isVi) "Được tài trợ" else "Sponsored"
+                adSponsoredLabel = strings.adSponsoredLabel
             )
 
             // 5. STREAK FREEZE REWARD CARD
@@ -507,7 +494,7 @@ fun WeeklyHistoryScreen(
                 }
             }
 
-            // 6. STREAK BADGES
+            // 6. STREAK BADGES (Centered 2x2 Grid)
             Text(
                 text = strings.badgesTitle(currentStreak),
                 style = MaterialTheme.typography.titleMedium.copy(
@@ -516,11 +503,23 @@ fun WeeklyHistoryScreen(
                 )
             )
 
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(14.dp)
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(badges) { badge ->
-                    BadgeCard(badge = badge, isDark = isDark)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    BadgeCard(badge = badges[0], isDark = isDark, modifier = Modifier.weight(1f))
+                    BadgeCard(badge = badges[1], isDark = isDark, modifier = Modifier.weight(1f))
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    BadgeCard(badge = badges[2], isDark = isDark, modifier = Modifier.weight(1f))
+                    BadgeCard(badge = badges[3], isDark = isDark, modifier = Modifier.weight(1f))
                 }
             }
 
@@ -655,25 +654,25 @@ private fun DayBarColumn(
 @Composable
 private fun BadgeCard(
     badge: StreakBadge,
-    isDark: Boolean
+    isDark: Boolean,
+    modifier: Modifier = Modifier
 ) {
     val badgeColor = if (badge.isUnlocked) GoldReward else Color.Gray
     val cardBg = if (isDark) Color(0xFF1E293B) else Color.White
     val cardBorder = if (badge.isUnlocked) GoldReward.copy(alpha = 0.6f) else (if (isDark) Color(0xFF334155) else Color(0xFFE2E8F0))
 
     Column(
-        modifier = Modifier
-            .width(110.dp)
+        modifier = modifier
             .clip(RoundedCornerShape(18.dp))
             .background(cardBg)
             .border(1.dp, cardBorder, RoundedCornerShape(18.dp))
-            .padding(14.dp),
+            .padding(vertical = 14.dp, horizontal = 10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(46.dp)
+                .size(44.dp)
                 .clip(CircleShape)
                 .background(badgeColor.copy(alpha = 0.15f)),
             contentAlignment = Alignment.Center
@@ -683,7 +682,7 @@ private fun BadgeCard(
                     imageVector = Icons.Default.LocalFireDepartment,
                     contentDescription = "Unlocked",
                     tint = GoldReward,
-                    modifier = Modifier.size(26.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             } else {
                 Icon(
@@ -699,18 +698,25 @@ private fun BadgeCard(
             text = badge.title,
             style = MaterialTheme.typography.bodySmall.copy(
                 fontWeight = FontWeight.Bold,
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 color = if (badge.isUnlocked) MaterialTheme.colorScheme.onBackground else Color.Gray
             ),
-            maxLines = 1
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            softWrap = false,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.fillMaxWidth()
         )
 
         Text(
             text = badge.daysLabel,
             style = MaterialTheme.typography.labelSmall.copy(
-                fontSize = 10.sp,
+                fontSize = 11.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-            )
+            ),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }

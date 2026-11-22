@@ -538,7 +538,6 @@ fun HomeScreen(
             if (pendingAddMl != null) {
                 val volume = pendingAddMl!!
                 val effectiveMl = Math.round(volume * selectedBeverage.hydrationFactor)
-                val isVi = strings.cancel == "Hủy"
 
                 Dialog(onDismissRequest = { pendingAddMl = null }) {
                     Card(

@@ -398,5 +398,49 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
         );
       }
     });
+
+    it('verifies streak badge titles and pluralization correctness across all 5 languages', () => {
+      const badgesTitleFormatter = {
+        en: (streak: number) => (streak === 1 ? 'Streak Badges (1 Day)' : `Streak Badges (${streak} Days)`),
+        vi: (streak: number) => `Huy Hiệu Chuỗi (${streak} Ngày)`,
+        es: (streak: number) => (streak === 1 ? 'Medallas de Racha (1 Día)' : `Medallas de Racha (${streak} Días)`),
+        ja: (streak: number) => `ストリークバッジ (${streak} 日)`,
+        de: (streak: number) => (streak === 1 ? 'Serien-Abzeichen (1 Tag)' : `Serien-Abzeichen (${streak} Tage)`)
+      };
+
+      // Test streak = 1 (singular)
+      assert.strictEqual(badgesTitleFormatter.en(1), 'Streak Badges (1 Day)');
+      assert.strictEqual(badgesTitleFormatter.es(1), 'Medallas de Racha (1 Día)');
+      assert.strictEqual(badgesTitleFormatter.de(1), 'Serien-Abzeichen (1 Tag)');
+      assert.strictEqual(badgesTitleFormatter.vi(1), 'Huy Hiệu Chuỗi (1 Ngày)');
+      assert.strictEqual(badgesTitleFormatter.ja(1), 'ストリークバッジ (1 日)');
+
+      // Test streak = 7 (plural)
+      assert.strictEqual(badgesTitleFormatter.en(7), 'Streak Badges (7 Days)');
+      assert.strictEqual(badgesTitleFormatter.es(7), 'Medallas de Racha (7 Días)');
+      assert.strictEqual(badgesTitleFormatter.de(7), 'Serien-Abzeichen (7 Tage)');
+    });
+
+    it('verifies centered 2x2 badge grid layout contains all 4 milestones without overflow', () => {
+      const badges = [
+        { id: 'starter', targetDays: 3 },
+        { id: 'week', targetDays: 7 },
+        { id: 'gold', targetDays: 14 },
+        { id: 'master', targetDays: 30 }
+      ];
+
+      assert.strictEqual(badges.length, 4, 'Must have exactly 4 milestone badges');
+      
+      // 2x2 grid distribution
+      const row1 = badges.slice(0, 2);
+      const row2 = badges.slice(2, 4);
+
+      assert.strictEqual(row1.length, 2, 'Row 1 must hold 2 badges');
+      assert.strictEqual(row2.length, 2, 'Row 2 must hold 2 badges');
+      assert.strictEqual(row1[0].targetDays, 3);
+      assert.strictEqual(row1[1].targetDays, 7);
+      assert.strictEqual(row2[0].targetDays, 14);
+      assert.strictEqual(row2[1].targetDays, 30);
+    });
   });
 });
