@@ -109,20 +109,25 @@ class WaterRepository(context: Context) {
         return prefs.getBoolean("is_onboarded", false)
     }
 
-    fun saveOnboardingProfile(
-        weightKg: Float,
-        gender: String,
-        activity: String,
-        customGoalMl: Int? = null
-    ) {
+    fun calculateDailyGoal(weightKg: Float, gender: String, activity: String): Int {
         val multiplier = if (gender == "male") 35 else 31
         val activityOffset = when (activity) {
             "moderate" -> 350
             "active" -> 700
             else -> 0
         }
-        val safeWeight = if (weightKg <= 0f || !weightKg.isFinite()) 50f else weightKg.coerceAtMost(300f)
-        val calculatedGoal = (customGoalMl ?: Math.round(safeWeight * multiplier + activityOffset)).coerceIn(1000, 10000)
+        val safeWeight = if (weightKg <= 0f || !weightKg.isFinite()) 50f else weightKg.coerceIn(20f, 300f)
+        return Math.round(safeWeight * multiplier + activityOffset).coerceIn(1000, 10000)
+    }
+
+    fun saveOnboardingProfile(
+        weightKg: Float,
+        gender: String,
+        activity: String,
+        customGoalMl: Int? = null
+    ) {
+        val safeWeight = if (weightKg <= 0f || !weightKg.isFinite()) 50f else weightKg.coerceIn(20f, 300f)
+        val calculatedGoal = (customGoalMl ?: calculateDailyGoal(safeWeight, gender, activity)).coerceIn(1000, 10000)
 
         prefs.edit()
             .putBoolean("is_onboarded", true)
@@ -135,6 +140,54 @@ class WaterRepository(context: Context) {
             .putInt("available_freezes", 1)
             .putString("last_active_date", getTodayDateStr())
             .apply()
+    }
+
+    fun getUserWeightKg(): Float {
+        return prefs.getFloat("user_weight_kg", 65f)
+    }
+
+    fun getUserGender(): String {
+        return prefs.getString("user_gender", "male") ?: "male"
+    }
+
+    fun getUserActivity(): String {
+        return prefs.getString("user_activity", "sedentary") ?: "sedentary"
+    }
+
+    /**
+     * Updates user weight, recalculates daily hydration goal, and re-activates
+     * 50% / 100% milestone ads & celebration if today's intake is below the new thresholds.
+     */
+    fun updateWeightAndRecalculateGoal(newWeightKg: Float): Int {
+        checkAndPerformMidnightRollover()
+        val safeWeight = if (newWeightKg <= 0f || !newWeightKg.isFinite()) 50f else newWeightKg.coerceIn(20f, 300f)
+        val newGoal = calculateDailyGoal(safeWeight, getUserGender(), getUserActivity())
+        val currentConsumed = getTodayConsumedMl()
+
+        val editor = prefs.edit()
+            .putFloat("user_weight_kg", safeWeight)
+            .putInt("daily_goal_ml", newGoal)
+
+        if (currentConsumed < newGoal) {
+            // Re-enable 100% celebration + interstitial ad and reset post-100% counter
+            editor.putBoolean("goal_dialog_shown_today", false)
+            editor.putInt("post_goal_adds_count", 0)
+
+            // Re-enable 50% milestone interstitial ad if current intake is below new 50% threshold
+            if (currentConsumed < newGoal / 2) {
+                editor.putBoolean("half_goal_ad_shown_today", false)
+            }
+        } else {
+            // Lowered goal made today's intake reach >= 100%
+            val alreadyAchievedToday = prefs.getBoolean("achieved_today", false)
+            if (!alreadyAchievedToday) {
+                editor.putInt("current_streak", getStreakDays() + 1)
+                editor.putBoolean("achieved_today", true)
+            }
+        }
+
+        editor.apply()
+        return newGoal
     }
 
     fun getAppLanguage(): String {

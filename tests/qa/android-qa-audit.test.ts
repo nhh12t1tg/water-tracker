@@ -647,5 +647,95 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       assert.strictEqual(res7.currentStreak, 10, 'Streak preserved across DST boundary');
       assert.strictEqual(res7.availableFreezes, 1, 'Exact 1 shield consumed for 1 missed day across DST boundary');
     });
+
+    it('verifies weight update recalculates daily goal and re-enables 50%/100% milestone ads', () => {
+      interface ProfileState {
+        weightKg: number;
+        gender: 'male' | 'female';
+        activity: 'sedentary' | 'moderate' | 'active';
+        dailyGoalMl: number;
+        currentConsumedMl: number;
+        halfGoalAdShownToday: boolean;
+        goalDialogShownToday: boolean;
+        achievedToday: boolean;
+        currentStreak: number;
+        postGoalAddsCount: number;
+      }
+
+      function updateWeight(state: ProfileState, newWeightKg: number): ProfileState {
+        const safeWeight = Math.min(300, Math.max(20, newWeightKg));
+        const multiplier = state.gender === 'male' ? 35 : 31;
+        const offset = state.activity === 'moderate' ? 350 : state.activity === 'active' ? 700 : 0;
+        const newGoal = Math.min(10000, Math.max(1000, Math.round(safeWeight * multiplier + offset)));
+
+        let halfShown = state.halfGoalAdShownToday;
+        let goalShown = state.goalDialogShownToday;
+        let achieved = state.achievedToday;
+        let streak = state.currentStreak;
+        let postAdds = state.postGoalAddsCount;
+
+        if (state.currentConsumedMl < newGoal) {
+          goalShown = false;
+          postAdds = 0;
+          if (state.currentConsumedMl < Math.floor(newGoal / 2)) {
+            halfShown = false;
+          }
+        } else if (!achieved) {
+          streak += 1;
+          achieved = true;
+        }
+
+        return {
+          ...state,
+          weightKg: safeWeight,
+          dailyGoalMl: newGoal,
+          halfGoalAdShownToday: halfShown,
+          goalDialogShownToday: goalShown,
+          achievedToday: achieved,
+          currentStreak: streak,
+          postGoalAddsCount: postAdds
+        };
+      }
+
+      // 1. User had 2100ml goal (60kg male sedentary), drank 1200ml (57% -> 50% ad shown),
+      //    then updates weight to 80kg -> newGoal = 2800ml (1200 < 1400 -> 43%!)
+      //    Both 50% and 100% milestone ads must be re-enabled!
+      const s1: ProfileState = {
+        weightKg: 60,
+        gender: 'male',
+        activity: 'sedentary',
+        dailyGoalMl: 2100,
+        currentConsumedMl: 1200,
+        halfGoalAdShownToday: true,
+        goalDialogShownToday: false,
+        achievedToday: false,
+        currentStreak: 2,
+        postGoalAddsCount: 0
+      };
+      const r1 = updateWeight(s1, 80);
+      assert.strictEqual(r1.dailyGoalMl, 2800);
+      assert.strictEqual(r1.halfGoalAdShownToday, false, '50% ad must be re-enabled when < 50% of new goal');
+      assert.strictEqual(r1.goalDialogShownToday, false, '100% dialog & ad must be enabled when < 100% of new goal');
+
+      // 2. User reached 100% of 2100ml (postGoalAddsCount = 3), then updates weight to 80kg (2800ml)
+      //    100% celebration & ad re-enabled, postGoalAddsCount reset to 0, 50% ad stays true (2100 >= 1400)
+      const s2: ProfileState = {
+        weightKg: 60,
+        gender: 'male',
+        activity: 'sedentary',
+        dailyGoalMl: 2100,
+        currentConsumedMl: 2100,
+        halfGoalAdShownToday: true,
+        goalDialogShownToday: true,
+        achievedToday: true,
+        currentStreak: 3,
+        postGoalAddsCount: 3
+      };
+      const r2 = updateWeight(s2, 80);
+      assert.strictEqual(r2.dailyGoalMl, 2800);
+      assert.strictEqual(r2.goalDialogShownToday, false, '100% milestone ad must re-trigger at new 2800ml goal');
+      assert.strictEqual(r2.postGoalAddsCount, 0, 'Post-100% counter must reset');
+      assert.strictEqual(r2.halfGoalAdShownToday, true, 'Already past 50% of new goal (2100 >= 1400)');
+    });
   });
 });

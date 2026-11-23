@@ -157,7 +157,13 @@ fun HomeScreen() {
                 currentStreak = streakDays,
                 availableFreezes = availableFreezes,
                 strings = strings,
-                onBack = { currentScreen = AppScreen.HOME },
+                onBack = {
+                    targetMl = repository.getDailyGoalMl()
+                    currentMl = repository.getTodayConsumedMl()
+                    streakDays = repository.getStreakDays()
+                    availableFreezes = repository.getAvailableFreezes()
+                    currentScreen = AppScreen.HOME
+                },
                 onWatchRewardForStreakFreeze = {
                     val activity = context as? Activity
                     if (activity != null) {
@@ -183,7 +189,13 @@ fun HomeScreen() {
                     repository.setAppLanguage(langCode)
                     currentLanguageCode = langCode
                 },
-                onBack = { currentScreen = AppScreen.HOME }
+                onBack = {
+                    targetMl = repository.getDailyGoalMl()
+                    currentMl = repository.getTodayConsumedMl()
+                    streakDays = repository.getStreakDays()
+                    availableFreezes = repository.getAvailableFreezes()
+                    currentScreen = AppScreen.HOME
+                }
             )
         }
         AppScreen.HOME -> {

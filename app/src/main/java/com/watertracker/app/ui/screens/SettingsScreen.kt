@@ -12,14 +12,17 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bedtime
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Security
+import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -30,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -61,12 +65,18 @@ fun SettingsScreen(
     var wakeUpTime by remember { mutableStateOf(repository.getWakeUpTime()) }
     var bedTime by remember { mutableStateOf(repository.getBedTime()) }
     var showLanguagePicker by remember { mutableStateOf(false) }
+    var showWeightDialog by remember { mutableStateOf(false) }
+    var weightKg by remember { mutableFloatStateOf(repository.getUserWeightKg()) }
+    var dailyGoalMl by remember { mutableIntStateOf(repository.getDailyGoalMl()) }
     var showGdprToast by remember { mutableStateOf(false) }
     var isPersonalizedAds by remember { mutableStateOf(repository.isPersonalizedAdsEnabled()) }
 
-    // Dismiss language picker if back button is pressed while picker dialog is open
+    // Dismiss pickers if back button is pressed while picker dialog is open
     BackHandler(enabled = showLanguagePicker) {
         showLanguagePicker = false
+    }
+    BackHandler(enabled = showWeightDialog) {
+        showWeightDialog = false
     }
 
     val showTimePicker = { isWakeUp: Boolean ->
@@ -177,6 +187,77 @@ fun SettingsScreen(
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
                             softWrap = false
+                        )
+                    }
+                }
+            }
+
+            // Group 0.5: Profile & Daily Hydration Goal
+            Text(
+                text = strings.settingsProfileSection,
+                style = MaterialTheme.typography.labelMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    letterSpacing = 1.sp
+                )
+            )
+
+            SettingCard(glassBg, glassBorder) {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showWeightDialog = true }
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Icon(Icons.Default.MonitorWeight, contentDescription = null, tint = CyanPrimary)
+                            Text(strings.settingsWeightLabel, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = "${Math.round(weightKg)} kg",
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                            Icon(
+                                Icons.Default.Edit,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+
+                    HorizontalDivider(color = Color(0x15FFFFFF))
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Icon(Icons.Default.WaterDrop, contentDescription = null, tint = CyanPrimary)
+                            Text(strings.settingsDailyGoalLabel, style = MaterialTheme.typography.bodyMedium)
+                        }
+                        Text(
+                            text = "$dailyGoalMl ml",
+                            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface
                         )
                     }
                 }
@@ -465,6 +546,76 @@ fun SettingsScreen(
                     confirmButton = {
                         TextButton(onClick = { showGdprToast = false }) {
                             Text(strings.close, fontWeight = FontWeight.Bold)
+                        }
+                    }
+                )
+            }
+
+            // Body Weight Edit Dialog
+            if (showWeightDialog) {
+                var weightInput by remember { mutableStateOf(Math.round(weightKg).toString()) }
+                val parsedWeight = weightInput.toFloatOrNull()?.coerceIn(20f, 300f) ?: weightKg
+                val previewGoal = repository.calculateDailyGoal(
+                    parsedWeight,
+                    repository.getUserGender(),
+                    repository.getUserActivity()
+                )
+
+                AlertDialog(
+                    onDismissRequest = { showWeightDialog = false },
+                    title = {
+                        Text(strings.settingsEditWeightTitle, fontWeight = FontWeight.Bold)
+                    },
+                    text = {
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(12.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            OutlinedTextField(
+                                value = weightInput,
+                                onValueChange = { input ->
+                                    if (input.length <= 3 && input.all { it.isDigit() }) {
+                                        weightInput = input
+                                    }
+                                },
+                                singleLine = true,
+                                suffix = { Text("kg") },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            Text(
+                                text = strings.settingsEditWeightPreview(previewGoal),
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontWeight = FontWeight.SemiBold,
+                                    color = CyanPrimary
+                                )
+                            )
+                        }
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                val finalWeight = weightInput.toFloatOrNull()?.coerceIn(20f, 300f)
+                                if (finalWeight != null) {
+                                    val newGoal = repository.updateWeightAndRecalculateGoal(finalWeight)
+                                    weightKg = finalWeight
+                                    dailyGoalMl = newGoal
+
+                                    if (repository.getTodayConsumedMl() >= newGoal) {
+                                        ReminderManager.cancelAllReminders(context)
+                                    } else {
+                                        ReminderManager.scheduleNextReminder(context)
+                                    }
+                                }
+                                showWeightDialog = false
+                            }
+                        ) {
+                            Text(strings.confirm, maxLines = 1, softWrap = false)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showWeightDialog = false }) {
+                            Text(strings.cancel, maxLines = 1, softWrap = false)
                         }
                     }
                 )
