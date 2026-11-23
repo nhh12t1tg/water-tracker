@@ -3,6 +3,7 @@ package com.watertracker.app.ads
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdLoader
 import com.google.android.gms.ads.AdRequest
@@ -188,8 +189,7 @@ object AdMobManager {
                     Log.w(TAG, "RewardedAd failed to show: ${adError.message}")
                     rewardedAd = null
                     preloadRewarded(activity)
-                    // Grant reward as fallback so test user isn't stuck
-                    onRewardGranted()
+                    Toast.makeText(activity, "Ad unavailable right now. Please try again later.", Toast.LENGTH_SHORT).show()
                     onDismissed()
                 }
 
@@ -203,9 +203,9 @@ object AdMobManager {
                 rewardEarned = true
             }
         } else {
-            Log.d(TAG, "RewardedAd not ready yet. Preloading and granting fallback reward.")
+            Log.d(TAG, "RewardedAd not ready yet. Preloading for next attempt.")
             preloadRewarded(activity)
-            onRewardGranted()
+            Toast.makeText(activity, "Ad is loading, please try again in a moment.", Toast.LENGTH_SHORT).show()
             onDismissed()
         }
     }

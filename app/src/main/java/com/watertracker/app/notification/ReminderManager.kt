@@ -10,6 +10,7 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.watertracker.app.MainActivity
+import com.watertracker.app.R
 import com.watertracker.app.data.WaterRepository
 import com.watertracker.app.ui.i18n.LocalizationManager
 import java.util.Calendar
@@ -208,7 +209,7 @@ object ReminderManager {
         )
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_popup_reminder)
+            .setSmallIcon(R.drawable.ic_notification_water)
             .setContentTitle(strings.notificationTitle)
             .setContentText(strings.notificationBody(percent))
             .setStyle(NotificationCompat.BigTextStyle().bigText(strings.notificationBody(percent)))

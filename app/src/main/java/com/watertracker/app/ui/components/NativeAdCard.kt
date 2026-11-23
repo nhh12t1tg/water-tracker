@@ -51,18 +51,27 @@ fun NativeAdCard(
     var isFailed by remember { mutableStateOf(false) }
 
     DisposableEffect(Unit) {
+        var isDisposed = false
         AdMobManager.loadNativeAd(
             context = context,
             adUnitId = adUnitId,
             onAdLoaded = { ad ->
-                nativeAd = ad
+                if (isDisposed) {
+                    ad.destroy()
+                } else {
+                    nativeAd = ad
+                }
             },
             onAdFailed = {
-                isFailed = true
+                if (!isDisposed) {
+                    isFailed = true
+                }
             }
         )
         onDispose {
+            isDisposed = true
             nativeAd?.destroy()
+            nativeAd = null
         }
     }
 

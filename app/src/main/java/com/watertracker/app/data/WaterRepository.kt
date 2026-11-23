@@ -9,16 +9,20 @@ import java.util.*
 class WaterRepository(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("water_tracker_store", Context.MODE_PRIVATE)
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
-    private val dayNameFormat = SimpleDateFormat("EEE", Locale("vi", "VN"))
+    private val dayNameFormat = SimpleDateFormat("EEE", Locale.forLanguageTag("vi-VN"))
 
     init {
         checkAndPerformMidnightRollover()
     }
 
-    private fun formatLocalDate(date: Date): String {
+    private fun createLocalDateFormatter(): SimpleDateFormat {
         return SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
             timeZone = TimeZone.getDefault()
-        }.format(date)
+        }
+    }
+
+    private fun formatLocalDate(date: Date): String {
+        return createLocalDateFormatter().format(date)
     }
 
     private fun getTodayDateStr(): String {
@@ -331,6 +335,7 @@ class WaterRepository(context: Context) {
 
     fun getWeeklyHistory(daysOfWeek: List<String>? = null): List<DayLogItem> {
         val calendar = Calendar.getInstance()
+        val localFormatter = createLocalDateFormatter()
         val goal = getDailyGoalMl()
         val result = mutableListOf<DayLogItem>()
         val defaultDays = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
@@ -339,7 +344,7 @@ class WaterRepository(context: Context) {
         for (i in 6 downTo 0) {
             val cal = calendar.clone() as Calendar
             cal.add(Calendar.DAY_OF_YEAR, -i)
-            val dateStr = formatLocalDate(cal.time)
+            val dateStr = localFormatter.format(cal.time)
             val dayOfWeekIndex = when (cal.get(Calendar.DAY_OF_WEEK)) {
                 Calendar.MONDAY -> 0
                 Calendar.TUESDAY -> 1
@@ -373,13 +378,14 @@ class WaterRepository(context: Context) {
 
     fun getMonthlyHistory(): List<DayLogItem> {
         val calendar = Calendar.getInstance()
+        val localFormatter = createLocalDateFormatter()
         val goal = getDailyGoalMl()
         val result = mutableListOf<DayLogItem>()
 
         for (i in 29 downTo 0) {
             val cal = calendar.clone() as Calendar
             cal.add(Calendar.DAY_OF_YEAR, -i)
-            val dateStr = formatLocalDate(cal.time)
+            val dateStr = localFormatter.format(cal.time)
             val dayLabel = "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}"
 
             val consumed = if (i == 0) {
