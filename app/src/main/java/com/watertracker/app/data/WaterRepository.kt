@@ -16,7 +16,10 @@ class WaterRepository(context: Context) {
     }
 
     private fun getTodayDateStr(): String {
-        return dateFormat.format(Date())
+        val localFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+            timeZone = TimeZone.getDefault()
+        }
+        return localFormat.format(Date())
     }
 
     /**
@@ -41,10 +44,13 @@ class WaterRepository(context: Context) {
             // Archive last active date's progress
             prefs.edit().putInt("history_$lastDate", lastConsumed).apply()
 
-            // Calculate calendar days elapsed
+            // Calculate calendar days elapsed (in UTC to avoid DST 23h/25h off-by-one errors across countries)
             val daysDiff = try {
-                val lastDateObj = dateFormat.parse(lastDate)
-                val todayDateObj = dateFormat.parse(today)
+                val utcFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+                    timeZone = TimeZone.getTimeZone("UTC")
+                }
+                val lastDateObj = utcFormat.parse(lastDate)
+                val todayDateObj = utcFormat.parse(today)
                 if (lastDateObj != null && todayDateObj != null) {
                     val diffTime = todayDateObj.time - lastDateObj.time
                     (diffTime / (1000 * 60 * 60 * 24)).toInt().coerceAtLeast(1)

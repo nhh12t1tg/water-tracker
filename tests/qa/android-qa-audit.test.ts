@@ -634,6 +634,18 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       const res6 = simulateMidnightRollover(state6, '2026-11-23');
       assert.strictEqual(res6.currentStreak, 0);
       assert.strictEqual(res6.availableFreezes, 1, 'Shields must not be consumed when user has 0 streak');
+
+      // Case 7: DST / Timezone rollover across countries (e.g. US Spring Forward 2026-03-07 -> 2026-03-09 = exact 2 calendar days)
+      const state7: UserState = {
+        lastActiveDate: '2026-03-07',
+        currentStreak: 10,
+        availableFreezes: 2,
+        lastDayConsumed: 2500,
+        dailyGoal: 2500
+      };
+      const res7 = simulateMidnightRollover(state7, '2026-03-09');
+      assert.strictEqual(res7.currentStreak, 10, 'Streak preserved across DST boundary');
+      assert.strictEqual(res7.availableFreezes, 1, 'Exact 1 shield consumed for 1 missed day across DST boundary');
     });
   });
 });
