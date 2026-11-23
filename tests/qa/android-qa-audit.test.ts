@@ -547,6 +547,9 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
             newFreezes -= missedDays;
             // Streak preserved!
           } else {
+            if (newStreak > 0) {
+              newFreezes = Math.max(0, newFreezes - missedDays);
+            }
             newStreak = 0;
           }
         }
@@ -608,7 +611,7 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       assert.strictEqual(res4.currentStreak, 7, 'Streak must be preserved across 1-day absence when shield available');
       assert.strictEqual(res4.availableFreezes, 1, 'Exactly 1 shield consumed for the 1 missed day');
 
-      // Case 5: 3-day gap with only 1 freeze (needs 2 freezes) -> Insufficient shields, resets streak
+      // Case 5: 3-day gap with only 1 freeze (needs 2 freezes) -> Consumes that 1 shield, then breaks streak
       const state5: UserState = {
         lastActiveDate: '2026-11-20',
         currentStreak: 7,
@@ -618,6 +621,19 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       };
       const res5 = simulateMidnightRollover(state5, '2026-11-23'); // 3-day diff, 2 days missed
       assert.strictEqual(res5.currentStreak, 0, 'Streak must break if user misses 2 days with only 1 shield');
+      assert.strictEqual(res5.availableFreezes, 0, 'The 1 available shield must be consumed for the first missed day');
+
+      // Case 6: No active streak (0 days) -> Does not waste shields
+      const state6: UserState = {
+        lastActiveDate: '2026-11-20',
+        currentStreak: 0,
+        availableFreezes: 1,
+        lastDayConsumed: 0,
+        dailyGoal: 2500
+      };
+      const res6 = simulateMidnightRollover(state6, '2026-11-23');
+      assert.strictEqual(res6.currentStreak, 0);
+      assert.strictEqual(res6.availableFreezes, 1, 'Shields must not be consumed when user has 0 streak');
     });
   });
 });

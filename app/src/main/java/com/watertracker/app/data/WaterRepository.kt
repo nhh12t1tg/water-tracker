@@ -71,8 +71,16 @@ class WaterRepository(context: Context) {
                         .putInt("available_freezes", freezes - missedDays)
                         .apply()
                 } else {
-                    // Not enough shields or streak was 0 -> streak broken
-                    prefs.edit().putInt("current_streak", 0).apply()
+                    // Consume any available shields used before the streak broke, then reset streak
+                    val remainingFreezes = if (currentStreak > 0) {
+                        (freezes - missedDays).coerceAtLeast(0)
+                    } else {
+                        freezes
+                    }
+                    prefs.edit()
+                        .putInt("available_freezes", remainingFreezes)
+                        .putInt("current_streak", 0)
+                        .apply()
                 }
             }
 
