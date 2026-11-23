@@ -17,6 +17,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bedtime
+import androidx.compose.material.icons.filled.DirectionsRun
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.MonitorWeight
@@ -66,7 +67,9 @@ fun SettingsScreen(
     var bedTime by remember { mutableStateOf(repository.getBedTime()) }
     var showLanguagePicker by remember { mutableStateOf(false) }
     var showWeightDialog by remember { mutableStateOf(false) }
+    var showActivityDialog by remember { mutableStateOf(false) }
     var weightKg by remember { mutableFloatStateOf(repository.getUserWeightKg()) }
+    var activityLevel by remember { mutableStateOf(repository.getUserActivity()) }
     var dailyGoalMl by remember { mutableIntStateOf(repository.getDailyGoalMl()) }
     var showGdprToast by remember { mutableStateOf(false) }
     var isPersonalizedAds by remember { mutableStateOf(repository.isPersonalizedAdsEnabled()) }
@@ -77,6 +80,9 @@ fun SettingsScreen(
     }
     BackHandler(enabled = showWeightDialog) {
         showWeightDialog = false
+    }
+    BackHandler(enabled = showActivityDialog) {
+        showActivityDialog = false
     }
 
     val showTimePicker = { isWakeUp: Boolean ->
@@ -236,6 +242,50 @@ fun SettingsScreen(
                                 modifier = Modifier.size(16.dp)
                             )
                         }
+                    }
+
+                    HorizontalDivider(color = Color(0x15FFFFFF))
+
+                    val activityDisplay = when (activityLevel) {
+                        "moderate" -> strings.activityModerate
+                        "active" -> strings.activityActive
+                        else -> strings.activitySedentary
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { showActivityDialog = true }
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp),
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Icon(Icons.Default.DirectionsRun, contentDescription = null, tint = CyanPrimary)
+                            Column {
+                                Text(strings.settingsActivityLabel, style = MaterialTheme.typography.bodyMedium)
+                                Text(
+                                    text = activityDisplay,
+                                    style = MaterialTheme.typography.bodySmall.copy(
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    ),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
+                        }
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
                     }
 
                     HorizontalDivider(color = Color(0x15FFFFFF))
@@ -558,7 +608,7 @@ fun SettingsScreen(
                 val previewGoal = repository.calculateDailyGoal(
                     parsedWeight,
                     repository.getUserGender(),
-                    repository.getUserActivity()
+                    activityLevel
                 )
 
                 AlertDialog(
@@ -616,6 +666,74 @@ fun SettingsScreen(
                     dismissButton = {
                         TextButton(onClick = { showWeightDialog = false }) {
                             Text(strings.cancel, maxLines = 1, softWrap = false)
+                        }
+                    }
+                )
+            }
+
+            // Activity Level Selection Dialog
+            if (showActivityDialog) {
+                val options = listOf(
+                    Triple("sedentary", strings.activitySedentary, "+0 ml"),
+                    Triple("moderate", strings.activityModerate, "+350 ml"),
+                    Triple("active", strings.activityActive, "+700 ml")
+                )
+                AlertDialog(
+                    onDismissRequest = { showActivityDialog = false },
+                    title = {
+                        Text(strings.settingsActivityLabel, fontWeight = FontWeight.Bold)
+                    },
+                    text = {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            options.forEach { (key, label, offsetLabel) ->
+                                val isCurrent = activityLevel == key
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(if (isCurrent) CyanPrimary.copy(alpha = 0.15f) else Color.Transparent)
+                                        .border(
+                                            1.dp,
+                                            if (isCurrent) CyanPrimary else Color(0x22FFFFFF),
+                                            RoundedCornerShape(12.dp)
+                                        )
+                                        .clickable {
+                                            val newGoal = repository.updateProfileAndRecalculateGoal(weightKg, key)
+                                            activityLevel = key
+                                            dailyGoalMl = newGoal
+                                            if (repository.getTodayConsumedMl() >= newGoal) {
+                                                ReminderManager.cancelAllReminders(context)
+                                            } else {
+                                                ReminderManager.scheduleNextReminder(context)
+                                            }
+                                            showActivityDialog = false
+                                        }
+                                        .padding(horizontal = 14.dp, vertical = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = label,
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
+                                            color = if (isCurrent) CyanPrimary else MaterialTheme.colorScheme.onBackground
+                                        ),
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Text(
+                                        text = offsetLabel,
+                                        style = MaterialTheme.typography.labelMedium.copy(
+                                            fontWeight = FontWeight.Bold,
+                                            color = if (isCurrent) CyanPrimary else MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showActivityDialog = false }) {
+                            Text(strings.close, fontWeight = FontWeight.Bold)
                         }
                     }
                 )

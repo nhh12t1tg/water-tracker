@@ -158,17 +158,19 @@ class WaterRepository(context: Context) {
     }
 
     /**
-     * Updates user weight, recalculates daily hydration goal, and re-activates
-     * 50% / 100% milestone ads & celebration if today's intake is below the new thresholds.
+     * Updates user weight and activity level, recalculates daily hydration goal,
+     * and re-activates 50% / 100% milestone ads & celebration if today's intake is below the new thresholds.
      */
-    fun updateWeightAndRecalculateGoal(newWeightKg: Float): Int {
+    fun updateProfileAndRecalculateGoal(newWeightKg: Float, newActivity: String): Int {
         checkAndPerformMidnightRollover()
         val safeWeight = if (newWeightKg <= 0f || !newWeightKg.isFinite()) 50f else newWeightKg.coerceIn(20f, 300f)
-        val newGoal = calculateDailyGoal(safeWeight, getUserGender(), getUserActivity())
+        val safeActivity = if (newActivity in listOf("sedentary", "moderate", "active")) newActivity else "sedentary"
+        val newGoal = calculateDailyGoal(safeWeight, getUserGender(), safeActivity)
         val currentConsumed = getTodayConsumedMl()
 
         val editor = prefs.edit()
             .putFloat("user_weight_kg", safeWeight)
+            .putString("user_activity", safeActivity)
             .putInt("daily_goal_ml", newGoal)
 
         if (currentConsumed < newGoal) {
@@ -191,6 +193,10 @@ class WaterRepository(context: Context) {
 
         editor.apply()
         return newGoal
+    }
+
+    fun updateWeightAndRecalculateGoal(newWeightKg: Float): Int {
+        return updateProfileAndRecalculateGoal(newWeightKg, getUserActivity())
     }
 
     fun getAppLanguage(): String {
