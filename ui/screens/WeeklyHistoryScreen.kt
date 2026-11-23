@@ -139,7 +139,8 @@ fun WeeklyHistoryScreen(
         },
         bottomBar = {
             AdaptiveBannerContainer(
-                isTestMode = true
+                isTestMode = true,
+                collapseWhenNotLoaded = true
             )
         },
         containerColor = if (isDark) DeepBlueDark else SkyBlueLight

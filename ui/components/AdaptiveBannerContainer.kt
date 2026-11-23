@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -45,24 +46,34 @@ import com.watertracker.app.ui.theme.GlassLightBackground
 @Composable
 fun AdaptiveBannerContainer(
     modifier: Modifier = Modifier,
-    isTestMode: Boolean = true
+    isTestMode: Boolean = true,
+    collapseWhenNotLoaded: Boolean = false
 ) {
     val isDark = isSystemInDarkTheme()
     val isInspection = LocalInspectionMode.current
     var isAdLoaded by remember { mutableStateOf(false) }
     val showContainerChrome = isAdLoaded || isInspection
+    val isCollapsed = collapseWhenNotLoaded && !showContainerChrome
 
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 16.dp, bottom = 8.dp) // Safety isolation padding
-            .navigationBarsPadding(),
+            .then(
+                if (isCollapsed) {
+                    Modifier.navigationBarsPadding()
+                } else {
+                    Modifier
+                        .padding(top = 16.dp, bottom = 8.dp) // Safety isolation padding
+                        .navigationBarsPadding()
+                }
+            ),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp) // Standard Google Adaptive Banner height reservation (prevents CLS)
+                .height(if (isCollapsed) 1.dp else 60.dp) // Standard Google Adaptive Banner height reservation (prevents CLS)
+                .alpha(if (isCollapsed) 0f else 1f)
                 .clip(RoundedCornerShape(8.dp))
                 .background(
                     if (showContainerChrome) {
