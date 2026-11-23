@@ -14,6 +14,7 @@ android {
     targetSdk = 36
     versionCode = 1
     versionName = "1.0.0"
+    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
     // Google AdMob Application ID (defaults to official test ID for dev/testing safety)
     manifestPlaceholders["ADMOB_APP_ID"] = System.getenv("ADMOB_APP_ID") ?: "ca-app-pub-3940256099942544~3347511713"
