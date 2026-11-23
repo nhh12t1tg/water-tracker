@@ -178,6 +178,7 @@ fun HomeScreen() {
                     val newTotal = repository.addWaterLog(effectiveMl, effectiveMl)
                     currentMl = newTotal
                     streakDays = repository.getStreakDays()
+                    availableFreezes = repository.getAvailableFreezes()
 
                     val halfGoal = targetMl / 2
                     if (previousMl < halfGoal && newTotal >= halfGoal && !repository.isHalfGoalAdShownToday()) {
@@ -213,7 +214,13 @@ fun HomeScreen() {
                 },
                 onOpenCustomDialog = { showCustomDialog = true },
                 onOpenThemeReward = { showThemeDialog = true },
-                onOpenHistory = { currentScreen = AppScreen.HISTORY },
+                onOpenHistory = {
+                    repository.checkAndPerformMidnightRollover()
+                    currentMl = repository.getTodayConsumedMl()
+                    streakDays = repository.getStreakDays()
+                    availableFreezes = repository.getAvailableFreezes()
+                    currentScreen = AppScreen.HISTORY
+                },
                 onOpenSettings = { currentScreen = AppScreen.SETTINGS },
                 onGoalReached = {
                     if (!repository.isGoalDialogShownToday()) {
@@ -236,6 +243,7 @@ fun HomeScreen() {
                         val newTotal = repository.addWaterLog(customRawMl, effective)
                         currentMl = newTotal
                         streakDays = repository.getStreakDays()
+                        availableFreezes = repository.getAvailableFreezes()
                         showCustomDialog = false
 
                         val halfGoal = targetMl / 2
