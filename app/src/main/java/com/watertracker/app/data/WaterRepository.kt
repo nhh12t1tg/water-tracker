@@ -44,8 +44,11 @@ class WaterRepository(context: Context) {
             val dailyGoal = getDailyGoalMl()
             val currentStreak = getStreakDays()
 
-            // Archive last active date's progress
-            prefs.edit().putInt("history_$lastDate", lastConsumed).apply()
+            // Archive last active date's progress and its daily goal
+            prefs.edit()
+                .putInt("history_$lastDate", lastConsumed)
+                .putInt("history_goal_$lastDate", dailyGoal)
+                .apply()
 
             // Calculate calendar days elapsed (in UTC to avoid DST 23h/25h off-by-one errors across countries)
             val daysDiff = try {
@@ -348,12 +351,13 @@ class WaterRepository(context: Context) {
             } else {
                 prefs.getInt("history_$dateStr", 0)
             }
+            val dayTarget = if (i == 0) goal else prefs.getInt("history_goal_$dateStr", goal)
 
             result.add(
                 DayLogItem(
                     dayName = dayName,
                     intakeMl = consumed,
-                    targetMl = goal,
+                    targetMl = dayTarget,
                     isToday = (i == 0)
                 )
             )
@@ -377,12 +381,13 @@ class WaterRepository(context: Context) {
             } else {
                 prefs.getInt("history_$dateStr", 0)
             }
+            val dayTarget = if (i == 0) goal else prefs.getInt("history_goal_$dateStr", goal)
 
             result.add(
                 DayLogItem(
                     dayName = dayLabel,
                     intakeMl = consumed,
-                    targetMl = goal,
+                    targetMl = dayTarget,
                     isToday = (i == 0)
                 )
             )
