@@ -15,11 +15,14 @@ class WaterRepository(context: Context) {
         checkAndPerformMidnightRollover()
     }
 
-    private fun getTodayDateStr(): String {
-        val localFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
+    private fun formatLocalDate(date: Date): String {
+        return SimpleDateFormat("yyyy-MM-dd", Locale.US).apply {
             timeZone = TimeZone.getDefault()
-        }
-        return localFormat.format(Date())
+        }.format(date)
+    }
+
+    private fun getTodayDateStr(): String {
+        return formatLocalDate(Date())
     }
 
     /**
@@ -118,11 +121,12 @@ class WaterRepository(context: Context) {
             "active" -> 700
             else -> 0
         }
-        val calculatedGoal = customGoalMl ?: Math.round(weightKg * multiplier + activityOffset)
+        val safeWeight = if (weightKg <= 0f || !weightKg.isFinite()) 50f else weightKg.coerceAtMost(300f)
+        val calculatedGoal = (customGoalMl ?: Math.round(safeWeight * multiplier + activityOffset)).coerceIn(1000, 10000)
 
         prefs.edit()
             .putBoolean("is_onboarded", true)
-            .putFloat("user_weight_kg", weightKg)
+            .putFloat("user_weight_kg", safeWeight)
             .putString("user_gender", gender)
             .putString("user_activity", activity)
             .putInt("daily_goal_ml", calculatedGoal)
@@ -223,6 +227,7 @@ class WaterRepository(context: Context) {
     fun addWaterLog(rawMl: Int, effectiveMl: Int): Int {
         checkAndPerformMidnightRollover()
         val current = getTodayConsumedMl()
+        if (effectiveMl <= 0) return current
         val newTotal = current + effectiveMl
         val goal = getDailyGoalMl()
         val streak = getStreakDays()
@@ -272,7 +277,7 @@ class WaterRepository(context: Context) {
         for (i in 6 downTo 0) {
             val cal = calendar.clone() as Calendar
             cal.add(Calendar.DAY_OF_YEAR, -i)
-            val dateStr = dateFormat.format(cal.time)
+            val dateStr = formatLocalDate(cal.time)
             val dayOfWeekIndex = when (cal.get(Calendar.DAY_OF_WEEK)) {
                 Calendar.MONDAY -> 0
                 Calendar.TUESDAY -> 1
@@ -311,7 +316,7 @@ class WaterRepository(context: Context) {
         for (i in 29 downTo 0) {
             val cal = calendar.clone() as Calendar
             cal.add(Calendar.DAY_OF_YEAR, -i)
-            val dateStr = dateFormat.format(cal.time)
+            val dateStr = formatLocalDate(cal.time)
             val dayLabel = "${cal.get(Calendar.DAY_OF_MONTH)}/${cal.get(Calendar.MONTH) + 1}"
 
             val consumed = if (i == 0) {

@@ -24,6 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -71,6 +74,24 @@ fun HomeScreen() {
     var showThemeDialog by remember { mutableStateOf(false) }
     var showCustomDialog by remember { mutableStateOf(false) }
     var selectedThemeIndex by remember { mutableIntStateOf(repository.getActiveThemeIndex()) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                repository.checkAndPerformMidnightRollover()
+                currentMl = repository.getTodayConsumedMl()
+                targetMl = repository.getDailyGoalMl()
+                streakDays = repository.getStreakDays()
+                availableFreezes = repository.getAvailableFreezes()
+                ReminderManager.ensureReminderScheduled(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     val localizedBeverages = remember(strings) { getScientificBeverages(strings) }
     var selectedBeverage by remember { mutableStateOf(localizedBeverages[0]) }

@@ -145,6 +145,21 @@ object ReminderManager {
         }
     }
 
+    /**
+     * Schedules the next reminder only if no active alarm is currently pending.
+     * Useful when resuming the app on a new day without pushing back an already-running timer.
+     */
+    fun ensureReminderScheduled(context: Context) {
+        val intent = Intent(context, ReminderReceiver::class.java).apply {
+            action = ACTION_REMIND_HYDRATION
+        }
+        val flags = PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
+        val existing = PendingIntent.getBroadcast(context, REQUEST_CODE_ALARM, intent, flags)
+        if (existing == null) {
+            scheduleNextReminder(context)
+        }
+    }
+
     fun cancelAllReminders(context: Context) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager ?: return
         val intent = Intent(context, ReminderReceiver::class.java).apply {
