@@ -61,15 +61,20 @@ fun HomeScreen() {
         mutableStateOf(if (repository.isOnboarded()) AppScreen.HOME else AppScreen.ONBOARDING)
     }
 
-    // Intercept phone's system back button/gesture to return to HOME instead of exiting app
-    BackHandler(enabled = currentScreen != AppScreen.HOME && repository.isOnboarded()) {
-        currentScreen = AppScreen.HOME
-    }
-
     var currentMl by remember { mutableIntStateOf(repository.getTodayConsumedMl()) }
     var targetMl by remember { mutableIntStateOf(repository.getDailyGoalMl()) }
     var streakDays by remember { mutableIntStateOf(repository.getStreakDays()) }
     var availableFreezes by remember { mutableIntStateOf(repository.getAvailableFreezes()) }
+
+    // Intercept phone's system back button/gesture to return to HOME and sync latest repository state
+    BackHandler(enabled = currentScreen != AppScreen.HOME && repository.isOnboarded()) {
+        repository.checkAndPerformMidnightRollover()
+        targetMl = repository.getDailyGoalMl()
+        currentMl = repository.getTodayConsumedMl()
+        streakDays = repository.getStreakDays()
+        availableFreezes = repository.getAvailableFreezes()
+        currentScreen = AppScreen.HOME
+    }
     var showGoalDialog by remember { mutableStateOf(false) }
     var showThemeDialog by remember { mutableStateOf(false) }
     var showCustomDialog by remember { mutableStateOf(false) }
