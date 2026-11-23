@@ -519,5 +519,105 @@ describe('Android QA Lead Comprehensive Audit Suite', () => {
       // 5. In quiet hours but DND disabled -> Notifies
       assert.strictEqual(shouldNotify(1000, 2500, false, true), true);
     });
+
+    it('verifies streak freeze shield protection and multi-day absence rollover logic', () => {
+      // Simulates WaterRepository.checkAndPerformMidnightRollover
+      interface UserState {
+        lastActiveDate: string;
+        currentStreak: number;
+        availableFreezes: number;
+        lastDayConsumed: number;
+        dailyGoal: number;
+      }
+
+      function simulateMidnightRollover(state: UserState, todayStr: string): UserState {
+        const lastDateObj = new Date(state.lastActiveDate);
+        const todayDateObj = new Date(todayStr);
+        const diffDays = Math.max(1, Math.round((todayDateObj.getTime() - lastDateObj.getTime()) / (1000 * 60 * 60 * 24)));
+
+        const missedDays = state.lastDayConsumed >= state.dailyGoal
+          ? Math.max(0, diffDays - 1)
+          : diffDays;
+
+        let newStreak = state.currentStreak;
+        let newFreezes = state.availableFreezes;
+
+        if (missedDays > 0) {
+          if (newStreak > 0 && newFreezes >= missedDays) {
+            newFreezes -= missedDays;
+            // Streak preserved!
+          } else {
+            newStreak = 0;
+          }
+        }
+
+        return {
+          ...state,
+          lastActiveDate: todayStr,
+          currentStreak: newStreak,
+          availableFreezes: newFreezes,
+          lastDayConsumed: 0
+        };
+      }
+
+      // Case 1: Yesterday goal achieved -> Streak maintained, 0 freezes consumed
+      const state1: UserState = {
+        lastActiveDate: '2026-11-20',
+        currentStreak: 5,
+        availableFreezes: 1,
+        lastDayConsumed: 2500,
+        dailyGoal: 2500
+      };
+      const res1 = simulateMidnightRollover(state1, '2026-11-21');
+      assert.strictEqual(res1.currentStreak, 5, 'Streak must be maintained when goal achieved yesterday');
+      assert.strictEqual(res1.availableFreezes, 1, 'No freeze should be consumed when goal achieved');
+
+      // Case 2: Yesterday missed goal, 1 freeze available -> Freeze consumed, Streak preserved!
+      const state2: UserState = {
+        lastActiveDate: '2026-11-20',
+        currentStreak: 5,
+        availableFreezes: 1,
+        lastDayConsumed: 1200, // missed goal
+        dailyGoal: 2500
+      };
+      const res2 = simulateMidnightRollover(state2, '2026-11-21');
+      assert.strictEqual(res2.currentStreak, 5, 'Streak must be preserved by 1 freeze shield');
+      assert.strictEqual(res2.availableFreezes, 0, '1 freeze shield must be consumed');
+
+      // Case 3: Yesterday missed goal, 0 freeze available -> Streak broken
+      const state3: UserState = {
+        lastActiveDate: '2026-11-20',
+        currentStreak: 5,
+        availableFreezes: 0,
+        lastDayConsumed: 1200,
+        dailyGoal: 2500
+      };
+      const res3 = simulateMidnightRollover(state3, '2026-11-21');
+      assert.strictEqual(res3.currentStreak, 0, 'Streak must reset to 0 when no freeze shields available');
+      assert.strictEqual(res3.availableFreezes, 0);
+
+      // Case 4: 2-day gap (Achieved on Nov 20, missed Nov 21, opens on Nov 22) -> Consumes 1 freeze for Nov 21
+      const state4: UserState = {
+        lastActiveDate: '2026-11-20',
+        currentStreak: 7,
+        availableFreezes: 2,
+        lastDayConsumed: 2500, // achieved on Nov 20
+        dailyGoal: 2500
+      };
+      const res4 = simulateMidnightRollover(state4, '2026-11-22'); // 2-day diff
+      assert.strictEqual(res4.currentStreak, 7, 'Streak must be preserved across 1-day absence when shield available');
+      assert.strictEqual(res4.availableFreezes, 1, 'Exactly 1 shield consumed for the 1 missed day');
+
+      // Case 5: 3-day gap with only 1 freeze (needs 2 freezes) -> Insufficient shields, resets streak
+      const state5: UserState = {
+        lastActiveDate: '2026-11-20',
+        currentStreak: 7,
+        availableFreezes: 1,
+        lastDayConsumed: 2500,
+        dailyGoal: 2500
+      };
+      const res5 = simulateMidnightRollover(state5, '2026-11-23'); // 3-day diff, 2 days missed
+      assert.strictEqual(res5.currentStreak, 0, 'Streak must break if user misses 2 days with only 1 shield');
+    });
   });
 });

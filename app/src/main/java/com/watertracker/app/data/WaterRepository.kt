@@ -8,7 +8,7 @@ import java.util.*
 
 class WaterRepository(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("water_tracker_store", Context.MODE_PRIVATE)
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
     private val dayNameFormat = SimpleDateFormat("EEE", Locale("vi", "VN"))
 
     init {
@@ -34,26 +34,44 @@ class WaterRepository(context: Context) {
 
         if (lastDate != today) {
             // Day rollover occurred!
-            val yesterdayConsumed = prefs.getInt("today_consumed_ml", 0)
+            val lastConsumed = prefs.getInt("today_consumed_ml", 0)
             val dailyGoal = getDailyGoalMl()
             val currentStreak = getStreakDays()
 
-            // Archive yesterday's progress
-            prefs.edit().putInt("history_$lastDate", yesterdayConsumed).apply()
+            // Archive last active date's progress
+            prefs.edit().putInt("history_$lastDate", lastConsumed).apply()
 
-            // Evaluate streak: Did user achieve goal yesterday?
-            if (yesterdayConsumed >= dailyGoal) {
-                // Streak maintained
+            // Calculate calendar days elapsed
+            val daysDiff = try {
+                val lastDateObj = dateFormat.parse(lastDate)
+                val todayDateObj = dateFormat.parse(today)
+                if (lastDateObj != null && todayDateObj != null) {
+                    val diffTime = todayDateObj.time - lastDateObj.time
+                    (diffTime / (1000 * 60 * 60 * 24)).toInt().coerceAtLeast(1)
+                } else 1
+            } catch (_: Exception) {
+                1
+            }
+
+            // Calculate how many days were missed
+            val missedDays = if (lastConsumed >= dailyGoal) {
+                // Goal was achieved on last active date
+                (daysDiff - 1).coerceAtLeast(0)
             } else {
-                // Missed goal! Check if streak freeze is available
+                // Goal was missed on last active date as well
+                daysDiff
+            }
+
+            // Evaluate streak protection via Freeze Shields
+            if (missedDays > 0) {
                 val freezes = getAvailableFreezes()
-                if (freezes > 0 && currentStreak > 0) {
-                    // Consume 1 freeze
+                if (currentStreak > 0 && freezes >= missedDays) {
+                    // Consume shields to protect streak
                     prefs.edit()
-                        .putInt("available_freezes", freezes - 1)
+                        .putInt("available_freezes", freezes - missedDays)
                         .apply()
                 } else {
-                    // Broken streak
+                    // Not enough shields or streak was 0 -> streak broken
                     prefs.edit().putInt("current_streak", 0).apply()
                 }
             }
