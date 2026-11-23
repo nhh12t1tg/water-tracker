@@ -8,6 +8,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,9 +22,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.LoadAdError
 import com.watertracker.app.ads.AdMobManager
 import com.watertracker.app.ui.theme.GlassDarkBackground
 import com.watertracker.app.ui.theme.GlassLightBackground
@@ -39,6 +49,8 @@ fun AdaptiveBannerContainer(
 ) {
     val isDark = isSystemInDarkTheme()
     val isInspection = LocalInspectionMode.current
+    var isAdLoaded by remember { mutableStateOf(false) }
+    val showContainerChrome = isAdLoaded || isInspection
 
     Column(
         modifier = modifier
@@ -50,13 +62,25 @@ fun AdaptiveBannerContainer(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp) // Standard Google Adaptive Banner height reservation
+                .height(60.dp) // Standard Google Adaptive Banner height reservation (prevents CLS)
                 .clip(RoundedCornerShape(8.dp))
-                .background(if (isDark) GlassDarkBackground else GlassLightBackground)
-                .border(
-                    width = 1.dp,
-                    color = if (isDark) Color(0x22FFFFFF) else Color(0x11000000),
-                    shape = RoundedCornerShape(8.dp)
+                .background(
+                    if (showContainerChrome) {
+                        if (isDark) GlassDarkBackground else GlassLightBackground
+                    } else {
+                        Color.Transparent
+                    }
+                )
+                .then(
+                    if (showContainerChrome) {
+                        Modifier.border(
+                            width = 1.dp,
+                            color = if (isDark) Color(0x22FFFFFF) else Color(0x11000000),
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                    } else {
+                        Modifier
+                    }
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -70,13 +94,44 @@ fun AdaptiveBannerContainer(
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                 )
             } else {
+                var adViewRef by remember { mutableStateOf<AdView?>(null) }
+                val lifecycleOwner = LocalLifecycleOwner.current
+
+                DisposableEffect(lifecycleOwner, adViewRef) {
+                    val observer = LifecycleEventObserver { _, event ->
+                        when (event) {
+                            Lifecycle.Event.ON_PAUSE -> adViewRef?.pause()
+                            Lifecycle.Event.ON_RESUME -> adViewRef?.resume()
+                            else -> {}
+                        }
+                    }
+                    lifecycleOwner.lifecycle.addObserver(observer)
+                    onDispose {
+                        lifecycleOwner.lifecycle.removeObserver(observer)
+                    }
+                }
+
                 AndroidView(
                     factory = { context ->
                         AdView(context).apply {
                             adUnitId = AdMobManager.BANNER_TEST_ID
                             setAdSize(AdSize.BANNER)
+                            adListener = object : AdListener() {
+                                override fun onAdLoaded() {
+                                    isAdLoaded = true
+                                }
+
+                                override fun onAdFailedToLoad(error: LoadAdError) {
+                                    isAdLoaded = false
+                                }
+                            }
                             loadAd(AdRequest.Builder().build())
+                            adViewRef = this
                         }
+                    },
+                    onRelease = { adView ->
+                        adView.destroy()
+                        adViewRef = null
                     },
                     modifier = Modifier.wrapContentSize()
                 )
