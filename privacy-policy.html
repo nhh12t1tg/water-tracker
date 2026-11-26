@@ -1,61 +1,1047 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Privacy Policy - AquaWave: Water Tracker</title>
+  <meta name="description" content="Official Privacy Policy for AquaWave: Water Tracker (com.nhh.aquawave) by nhh (nhh12t1tg). 100% local offline hydration tracking with transparent Google AdMob &amp; GDPR UMP disclosures." />
+  <meta name="color-scheme" content="light dark" />
+  <title>Privacy Policy — AquaWave: Water Tracker (com.nhh.aquawave)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
+    :root {
+      --header-height: 68px;
+      --bg: #f8fafc;
+      --bg-subtle: #f1f5f9;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-secondary: #334155;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --accent: #0284c7;
+      --accent-hover: #0369a1;
+      --accent-soft: #e0f2fe;
+      --accent-border: #bae6fd;
+      --success: #15803d;
+      --success-soft: #dcfce7;
+      --success-border: #bbf7d0;
+      --warn: #b45309;
+      --warn-soft: #fef3c7;
+      --warn-border: #fde68a;
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-md: 0 8px 24px -8px rgba(15, 23, 42, 0.08), 0 2px 6px -2px rgba(15, 23, 42, 0.04);
+      --font-body: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+
+    [data-theme="dark"] {
+      --bg: #020617;
+      --bg-subtle: #0b1120;
+      --surface: #0e1223;
+      --text: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --muted: #94a3b8;
+      --border: #1e293b;
+      --border-strong: #334155;
+      --accent: #38bdf8;
+      --accent-hover: #7dd3fc;
+      --accent-soft: rgba(56, 189, 248, 0.12);
+      --accent-border: rgba(56, 189, 248, 0.28);
+      --success: #4ade80;
+      --success-soft: rgba(34, 197, 94, 0.14);
+      --success-border: rgba(34, 197, 94, 0.3);
+      --warn: #fbbf24;
+      --warn-soft: rgba(251, 191, 36, 0.12);
+      --warn-border: rgba(251, 191, 36, 0.28);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 12px 32px -12px rgba(0, 0, 0, 0.55);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--header-height) + 24px);
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      max-width: 760px;
-      margin: 40px auto;
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--text);
+      background-color: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 16px;
+      z-index: 200;
+      background: var(--accent);
+      color: #ffffff;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus { top: 12px; }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 6px;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: var(--header-height);
+      background: color-mix(in srgb, var(--surface) 88%, transparent);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .topbar-inner {
+      max-width: 1120px;
+      height: 100%;
+      margin: 0 auto;
       padding: 0 20px;
-      line-height: 1.65;
-      color: #1e293b;
-      background-color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
-    h1, h2 { color: #0284c7; }
-    .card {
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 28px;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.01em;
     }
-    .meta { color: #64748b; font-size: 0.9em; margin-bottom: 24px; }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0284c7, #06b6d4);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+      flex-shrink: 0;
+    }
+
+    .brand-sub {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--muted);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .control-btn {
+      min-width: 44px;
+      min-height: 44px;
+      padding: 0 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    }
+
+    .control-btn:hover {
+      background: var(--bg-subtle);
+      border-color: var(--border-strong);
+    }
+
+    .control-btn:active { transform: scale(0.97); }
+
+    .hero {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 36px 20px 24px;
+    }
+
+    .hero-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #0284c7, #06b6d4, #22c55e);
+    }
+
+    .trust-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .badge-verified {
+      color: var(--success);
+      background: var(--success-soft);
+      border: 1px solid var(--success-border);
+    }
+
+    .badge-pkg {
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+    }
+
+    .badge-date {
+      color: var(--muted);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+      color: var(--text);
+    }
+
+    .hero-lead {
+      margin: 0 0 24px;
+      max-width: 74ch;
+      color: var(--text-secondary);
+      font-size: 1.02rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .summary-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .summary-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid var(--accent-border);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .summary-card h2 {
+      margin: 0 0 4px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .summary-card p {
+      margin: 0;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .layout {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 12px 20px 64px;
+      display: grid;
+      grid-template-columns: 256px minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .toc {
+      position: sticky;
+      top: calc(var(--header-height) + 20px);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .toc-title {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin: 0 0 10px;
+      padding: 0 10px;
+    }
+
+    .toc-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      min-height: 38px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .toc-link:hover {
+      background: var(--bg-subtle);
+      color: var(--text);
+    }
+
+    .toc-link.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-left-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .article {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .policy-section {
+      padding-top: 28px;
+      margin-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .policy-section:first-child {
+      padding-top: 0;
+      margin-top: 0;
+      border-top: none;
+    }
+
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .article h2 {
+      margin: 0 0 14px;
+      font-size: 1.35rem;
+      line-height: 1.3;
+      letter-spacing: -0.015em;
+      color: var(--text);
+    }
+
+    .article p {
+      margin: 0 0 14px;
+      color: var(--text-secondary);
+      max-width: 72ch;
+    }
+
+    .article p:last-child { margin-bottom: 0; }
+
+    .article ul {
+      margin: 12px 0 16px;
+      padding-left: 20px;
+      color: var(--text-secondary);
+    }
+
+    .article li { margin-bottom: 8px; }
+    .article strong { color: var(--text); font-weight: 600; }
+
+    .article a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 500;
+    }
+
+    .article a:hover { color: var(--accent-hover); }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.84em;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 6px;
+      color: var(--text);
+    }
+
+    /* Data Safety Alignment Table */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 16px 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-family: var(--font-mono);
+    }
+
+    tr:last-child td { border-bottom: none; }
+    td { color: var(--text-secondary); }
+
+    .callout {
+      margin: 16px 0;
+      padding: 16px 18px;
+      border-radius: var(--radius-md);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      color: var(--text-secondary);
+      font-size: 0.93rem;
+    }
+
+    .callout-warn {
+      background: var(--warn-soft);
+      border-color: var(--warn-border);
+    }
+
+    .callout strong { color: var(--text); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .contact-item {
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .contact-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    .contact-value {
+      font-size: 0.94rem;
+      font-weight: 600;
+      color: var(--text);
+      word-break: break-word;
+    }
+
+    .footer {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 20px 40px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer a { color: var(--muted); text-decoration: none; }
+    .footer a:hover { color: var(--accent); text-decoration: underline; }
+
+    [data-lang="vi"] .lang-en { display: none; }
+    [data-lang="en"] .lang-vi { display: none; }
+
+    @media (max-width: 960px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .layout { grid-template-columns: 1fr; gap: 18px; }
+      .toc { position: static; padding: 14px; }
+      .toc-list { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+      .toc-link {
+        border-left: none;
+        border: 1px solid var(--border);
+        background: var(--bg-subtle);
+        font-size: 0.82rem;
+        padding: 6px 12px;
+      }
+      .toc-link.active { border-color: var(--accent-border); }
+      .article { padding: 26px 22px; }
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 20px 14px 16px; }
+      .hero-card { padding: 22px 18px; }
+      .layout { padding: 8px 14px 48px; }
+      .brand-sub { display: none; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      *, *::before, *::after { transition: none !important; }
+    }
+
+    @media print {
+      .topbar, .toc { display: none !important; }
+      body { background: #ffffff; color: #000000; }
+      .layout { display: block; padding: 0; }
+      .hero-card, .article { box-shadow: none; border: none; padding: 0; }
+    }
   </style>
 </head>
-<body>
-  <div class="card">
-    <h1>Privacy Policy</h1>
-    <p class="meta"><strong>App:</strong> AquaWave: Water Tracker (<code>com.nhh.aquawave</code>)<br />
-    <strong>Effective Date:</strong> November 23, 2026</p>
+<body data-lang="en">
+  <a class="skip-link" href="#main-content">Skip to policy content</a>
 
-    <p>AquaWave: Water Tracker ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how your information is handled when you use our mobile application.</p>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="https://nhh12t1tg.github.io/water-tracker/">
+        <span class="brand-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+          </svg>
+        </span>
+        <span>AquaWave: Water Tracker</span>
+        <span class="brand-sub">com.nhh.aquawave</span>
+      </a>
 
-    <h2>1. 100% Local Offline Storage for Health &amp; Hydration Data</h2>
-    <p>All personal hydration preferences and health metrics you enter in the app—including body weight, gender, activity level, daily water intake logs, streak counts, and reminder schedules—are stored <strong>exclusively on your device</strong> using Android local storage (<code>SharedPreferences</code>) with cloud backup disabled (<code>allowBackup=false</code>).</p>
-    <p>We do <strong>not</strong> operate external servers, require user accounts, or collect, transmit, or sell your personal health data.</p>
+      <div class="topbar-actions">
+        <button id="langToggle" class="control-btn" type="button" aria-label="Switch language between English and Vietnamese">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M2 12h20"/>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+          </svg>
+          <span id="langLabel">English</span>
+        </button>
 
-    <h2>2. Advertising &amp; Third-Party Services (Google AdMob &amp; UMP)</h2>
-    <p>To keep the app free, AquaWave uses <strong>Google AdMob</strong> and <strong>Google User Messaging Platform (UMP)</strong> to display advertisements and manage consent preferences (including GDPR/EEA compliance).</p>
-    <ul>
-      <li>Google AdMob may collect and process your device's <strong>Advertising ID</strong>, IP address, and general diagnostic/interaction data to serve and measure ads in accordance with Google's Privacy Policy (<a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">https://policies.google.com/privacy</a>).</li>
-      <li>You can review or update your personalized vs. non-personalized ad preferences at any time in the app's <strong>Settings &rarr; Privacy Preferences</strong> screen.</li>
-    </ul>
+        <button id="themeToggle" class="control-btn" type="button" aria-label="Toggle dark or light color theme" aria-pressed="false">
+          <svg id="iconSun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+          </svg>
+          <svg id="iconMoon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
 
-    <h2>3. Device Permissions</h2>
-    <ul>
-      <li><strong>INTERNET:</strong> Required only to load advertisements and consent forms via Google AdMob/UMP.</li>
-      <li><strong>POST_NOTIFICATIONS:</strong> Used solely to display hydration reminder alerts at your chosen intervals.</li>
-      <li><strong>VIBRATE &amp; RECEIVE_BOOT_COMPLETED:</strong> Used to provide haptic feedback and restore local reminder schedules after a device restart or timezone change.</li>
-    </ul>
-    <p>We never request access to your location (GPS), camera, microphone, contacts, or external files.</p>
+  <section class="hero" aria-labelledby="policy-title">
+    <div class="hero-card">
+      <div class="trust-row">
+        <span class="badge badge-verified">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span class="lang-en">Google Play Data Safety Aligned</span>
+          <span class="lang-vi">Khớp chuẩn Google Play Data Safety</span>
+        </span>
+        <span class="badge badge-pkg">com.nhh.aquawave</span>
+        <span class="badge badge-date">
+          <span class="lang-en">Effective: November 27, 2026</span>
+          <span class="lang-vi">Hiệu lực: 27/11/2026</span>
+        </span>
+      </div>
 
-    <h2>4. Children's Privacy</h2>
-    <p>AquaWave is intended for users aged 13 and older and does not knowingly collect personal data from children under 13.</p>
+      <h1 id="policy-title">
+        <span class="lang-en">Privacy Policy — AquaWave: Water Tracker</span>
+        <span class="lang-vi">Chính Sách Quyền Riêng Tư — AquaWave</span>
+      </h1>
 
-    <h2>5. Contact Us</h2>
-    <p>If you have any questions about this Privacy Policy, please contact the developer via the support email listed on the Google Play Store page.</p>
+      <p class="hero-lead">
+        <span class="lang-en">This Privacy Policy applies to the Android application <strong>AquaWave: Water Tracker</strong> (<code>com.nhh.aquawave</code>), developed and published by <strong>nhh (nhh12t1tg)</strong>. We are committed to protecting your privacy: your hydration and wellness data stays <strong>100% offline on your device</strong>.</span>
+        <span class="lang-vi">Chính sách này áp dụng cho ứng dụng Android <strong>AquaWave: Water Tracker</strong> (<code>com.nhh.aquawave</code>) do <strong>nhh (nhh12t1tg)</strong> phát triển và phát hành. Chúng tôi cam kết bảo vệ quyền riêng tư của bạn: toàn bộ dữ liệu uống nước và chỉ số cá nhân chỉ lưu <strong>100% cục bộ trên điện thoại của bạn</strong>.</span>
+      </p>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <span class="summary-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </span>
+          <div>
+            <h2>
+              <span class="lang-en">100% Local Offline Storage</span>
+              <span class="lang-vi">Lưu Trữ 100% Offline</span>
+            </h2>
+            <p>
+              <span class="lang-en">Body weight, intake logs, and reminders never leave your phone. Cloud backup is disabled (<code>allowBackup=false</code>).</span>
+              <span class="lang-vi">Cân nặng, nhật ký uống nước và lịch nhắc không bao giờ rời khỏi máy. Đã tắt sao lưu đám mây (<code>allowBackup=false</code>).</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <line x1="17" y1="8" x2="22" y2="13"/>
+              <line x1="22" y1="8" x2="17" y2="13"/>
+            </svg>
+          </span>
+          <div>
+            <h2>
+              <span class="lang-en">No Account &amp; Zero Servers</span>
+              <span class="lang-vi">Không Tài Khoản, Không Máy Chủ</span>
+            </h2>
+            <p>
+              <span class="lang-en">No sign-up or login is required. Uninstall or clear app storage to erase 100% of your local data instantly.</span>
+              <span class="lang-vi">Không cần đăng ký hay đăng nhập. Gỡ app hoặc xóa dữ liệu ứng dụng sẽ xóa sạch 100% dữ liệu cục bộ ngay lập tức.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="summary-card">
+          <span class="summary-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+          </span>
+          <div>
+            <h2>
+              <span class="lang-en">Google AdMob &amp; GDPR UMP</span>
+              <span class="lang-vi">Google AdMob &amp; GDPR UMP</span>
+            </h2>
+            <p>
+              <span class="lang-en">Uses official Google AdMob &amp; UMP with in-app Non-Personalized Ads (<code>npa=1</code>) toggle and EEA consent controls.</span>
+              <span class="lang-vi">Tích hợp Google AdMob &amp; UMP chính thức cùng công tắc tắt cá nhân hóa (<code>npa=1</code>) và biểu mẫu đồng thuận EU.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc-title">
+        <span class="lang-en">On this page</span>
+        <span class="lang-vi">Mục lục</span>
+      </div>
+      <ul class="toc-list">
+        <li><a class="toc-link active" href="#local-data"><span class="lang-en">1. Local Health &amp; Hydration Data</span><span class="lang-vi">1. Dữ liệu uống nước offline</span></a></li>
+        <li><a class="toc-link" href="#admob-data"><span class="lang-en">2. Advertising &amp; SDK Data</span><span class="lang-vi">2. Quảng cáo &amp; Dữ liệu SDK</span></a></li>
+        <li><a class="toc-link" href="#permissions"><span class="lang-en">3. Device Permissions</span><span class="lang-vi">3. Quyền thiết bị</span></a></li>
+        <li><a class="toc-link" href="#controls-deletion"><span class="lang-en">4. Privacy Controls &amp; Deletion</span><span class="lang-vi">4. Kiểm soát &amp; Xóa dữ liệu</span></a></li>
+        <li><a class="toc-link" href="#wellness-disclaimer"><span class="lang-en">5. Wellness Disclaimer</span><span class="lang-vi">5. Lưu ý sức khỏe</span></a></li>
+        <li><a class="toc-link" href="#childrens-privacy"><span class="lang-en">6. Children's Privacy (13+)</span><span class="lang-vi">6. Quyền riêng tư trẻ em</span></a></li>
+        <li><a class="toc-link" href="#policy-updates"><span class="lang-en">7. Policy Updates</span><span class="lang-vi">7. Cập nhật chính sách</span></a></li>
+        <li><a class="toc-link" href="#contact"><span class="lang-en">8. Contact Us</span><span class="lang-vi">8. Liên hệ</span></a></li>
+      </ul>
+    </nav>
+
+    <main id="main-content" class="article">
+      <section id="local-data" class="policy-section">
+        <span class="section-eyebrow">01</span>
+        <h2>
+          <span class="lang-en">100% Local Offline Storage for Health &amp; Hydration Data</span>
+          <span class="lang-vi">Lưu Trữ Cục Bộ 100% Offline Cho Dữ Liệu Uống Nước</span>
+        </h2>
+        <div class="lang-en">
+          <p>All personal hydration preferences and wellness inputs you enter in <strong>AquaWave: Water Tracker</strong> — including body weight, biological sex, daily activity level, custom daily water goal, beverage intake logs, streak count, reminder schedule, quiet hours (DND), measurement units (<code>ml/kg</code> or <code>fl oz/lbs</code>), theme, and language — are stored <strong>exclusively on your device</strong> in Android's private application storage (<code>SharedPreferences</code>).</p>
+          <p>Automatic cloud backup and device-to-device data extraction are explicitly disabled in the app manifest (<code>android:allowBackup="false"</code> and <code>data_extraction_rules.xml</code>).</p>
+          <p>We do <strong>not</strong> operate external user servers, require account registration, or collect, transmit, share, or sell your personal health or hydration data to any third party.</p>
+        </div>
+        <div class="lang-vi">
+          <p>Toàn bộ thông số cá nhân và nhật ký bạn nhập vào <strong>AquaWave: Water Tracker</strong> — bao gồm cân nặng, giới tính, mức độ vận động, mục tiêu nước hằng ngày, nhật ký từng lần uống, chuỗi ngày (streak), lịch nhắc nhở, khung giờ ngủ (DND), đơn vị đo (<code>ml/kg</code> hoặc <code>fl oz/lbs</code>), giao diện và ngôn ngữ — được lưu trữ <strong>duy nhất trên thiết bị của bạn</strong> trong vùng nhớ riêng tư của Android (<code>SharedPreferences</code>).</p>
+          <p>Tính năng sao lưu đám mây tự động và trích xuất chuyển máy đã bị tắt hoàn toàn trong cấu hình ứng dụng (<code>android:allowBackup="false"</code> và <code>data_extraction_rules.xml</code>).</p>
+          <p>Chúng tôi <strong>không</strong> vận hành máy chủ người dùng, không yêu cầu tạo tài khoản và tuyệt đối không thu thập, truyền tải, chia sẻ hay bán dữ liệu sức khỏe/uống nước của bạn cho bất kỳ bên thứ ba nào.</p>
+        </div>
+      </section>
+
+      <section id="admob-data" class="policy-section">
+        <span class="section-eyebrow">02</span>
+        <h2>
+          <span class="lang-en">Advertising &amp; Third-Party SDK Data (Google AdMob &amp; UMP)</span>
+          <span class="lang-vi">Quảng Cáo &amp; Dữ Liệu SDK Bên Thứ Ba (Google AdMob &amp; UMP)</span>
+        </h2>
+        <div class="lang-en">
+          <p>To keep AquaWave free without paid subscriptions, the app integrates <strong>Google AdMob</strong> (Google Mobile Ads SDK) and <strong>Google User Messaging Platform (UMP)</strong> to display advertisements (banner, interstitial, rewarded, and native ads) and manage regional privacy consent.</p>
+          <p>In full alignment with our Google Play <strong>Data Safety</strong> declaration, Google AdMob may automatically collect and share the following technical data encrypted in transit via <code>HTTPS/TLS</code>:</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Data Category</th>
+                  <th>Examples</th>
+                  <th>Purpose</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Device or Other IDs</strong></td>
+                  <td>Google Advertising ID (AAID), App Set ID</td>
+                  <td>Advertising or marketing, Analytics, Fraud prevention &amp; security</td>
+                </tr>
+                <tr>
+                  <td><strong>Approximate Location</strong></td>
+                  <td>General region/country inferred from IP address (never GPS)</td>
+                  <td>Advertising or marketing, Analytics, Fraud prevention &amp; security</td>
+                </tr>
+                <tr>
+                  <td><strong>App Activity</strong></td>
+                  <td>Ad impressions, ad clicks &amp; interactions</td>
+                  <td>Advertising or marketing, Analytics, Fraud prevention &amp; security</td>
+                </tr>
+                <tr>
+                  <td><strong>App Info &amp; Performance</strong></td>
+                  <td>Crash logs &amp; SDK performance diagnostics</td>
+                  <td>Analytics, Fraud prevention, security &amp; compliance</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Your locally stored hydration logs and body metrics are <strong>never</strong> shared with Google AdMob or used for ad targeting. Learn more in the <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google Privacy Policy</a> and <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer">How Google Uses Information from Partner Apps</a>.</p>
+        </div>
+        <div class="lang-vi">
+          <p>Để cung cấp AquaWave hoàn toàn miễn phí không thu phí đăng ký, ứng dụng tích hợp <strong>Google AdMob</strong> và <strong>Google User Messaging Platform (UMP)</strong> để hiển thị quảng cáo (banner, xen kẽ, video nhận thưởng, quảng cáo tự nhiên) và quản lý quyền đồng thuận theo khu vực.</p>
+          <p>Khớp 100% với tờ khai <strong>An toàn dữ liệu (Data Safety)</strong> trên Google Play, SDK Google AdMob có thể tự động thu thập và chia sẻ các nhóm dữ liệu kỹ thuật sau (được mã hóa khi truyền qua <code>HTTPS/TLS</code>):</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nhóm dữ liệu</th>
+                  <th>Chi tiết</th>
+                  <th>Mục đích</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Mã nhận dạng thiết bị</strong></td>
+                  <td>Google Advertising ID (AAID), App Set ID</td>
+                  <td>Quảng cáo/tiếp thị, Phân tích, Chống gian lận &amp; bảo mật</td>
+                </tr>
+                <tr>
+                  <td><strong>Vị trí gần đúng</strong></td>
+                  <td>Vùng/quốc gia suy luận từ địa chỉ IP (không lấy GPS)</td>
+                  <td>Quảng cáo/tiếp thị, Phân tích, Chống gian lận &amp; bảo mật</td>
+                </tr>
+                <tr>
+                  <td><strong>Hoạt động ứng dụng</strong></td>
+                  <td>Lượt hiển thị và lượt tương tác quảng cáo</td>
+                  <td>Quảng cáo/tiếp thị, Phân tích, Chống gian lận &amp; bảo mật</td>
+                </tr>
+                <tr>
+                  <td><strong>Thông tin &amp; hiệu suất</strong></td>
+                  <td>Nhật ký sự cố (crash logs) và chẩn đoán SDK</td>
+                  <td>Phân tích, Chống gian lận, bảo mật &amp; tuân thủ</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Dữ liệu cân nặng và nhật ký uống nước lưu trên máy của bạn <strong>không bao giờ</strong> được chia sẻ cho Google AdMob. Xem thêm tại <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Chính sách quyền riêng tư của Google</a>.</p>
+        </div>
+      </section>
+
+      <section id="permissions" class="policy-section">
+        <span class="section-eyebrow">03</span>
+        <h2>
+          <span class="lang-en">Device Permissions</span>
+          <span class="lang-vi">Quyền Truy Cập Thiết Bị</span>
+        </h2>
+        <div class="lang-en">
+          <p>AquaWave follows strict data minimization and requests only four essential Android permissions:</p>
+          <ul>
+            <li><code>INTERNET</code> — Used exclusively to load advertisements and regional GDPR consent forms via Google AdMob and UMP.</li>
+            <li><code>POST_NOTIFICATIONS</code> — Optional runtime permission (Android 13+) used solely to display scheduled hydration reminder alerts. The app remains fully functional if declined.</li>
+            <li><code>VIBRATE</code> — Provides subtle haptic feedback when logging drinks and alerting reminders.</li>
+            <li><code>RECEIVE_BOOT_COMPLETED</code> — Restores your local hydration reminder schedule automatically after a device restart, timezone change, or app update.</li>
+          </ul>
+          <p>We <strong>never</strong> request access to precise location (GPS), camera, microphone, contacts, SMS, call logs, Health Connect, or external files.</p>
+        </div>
+        <div class="lang-vi">
+          <p>AquaWave tuân thủ nguyên tắc tối giản quyền và chỉ sử dụng đúng 4 quyền Android thiết yếu:</p>
+          <ul>
+            <li><code>INTERNET</code> — Chỉ dùng để tải quảng cáo và biểu mẫu đồng thuận GDPR thông qua Google AdMob và UMP.</li>
+            <li><code>POST_NOTIFICATIONS</code> — Quyền tùy chọn trên Android 13+ chỉ dùng để hiển thị thông báo nhắc uống nước đúng lịch. Nếu bạn từ chối, ứng dụng vẫn hoạt động bình thường.</li>
+            <li><code>VIBRATE</code> — Tạo rung nhẹ phản hồi khi bấm ghi nhận nước uống và khi đến giờ nhắc.</li>
+            <li><code>RECEIVE_BOOT_COMPLETED</code> — Khôi phục lại lịch nhắc uống nước cục bộ sau khi điện thoại khởi động lại, đổi múi giờ hoặc cập nhật ứng dụng.</li>
+          </ul>
+          <p>Chúng tôi <strong>tuyệt đối không</strong> yêu cầu quyền vị trí GPS, máy ảnh, micro, danh bạ, tin nhắn, nhật ký cuộc gọi, Health Connect hay tệp tin bộ nhớ ngoài.</p>
+        </div>
+      </section>
+
+      <section id="controls-deletion" class="policy-section">
+        <span class="section-eyebrow">04</span>
+        <h2>
+          <span class="lang-en">Your Privacy Controls, GDPR / CCPA &amp; Data Deletion</span>
+          <span class="lang-vi">Kiểm Soát Quyền Riêng Tư, GDPR / CCPA &amp; Xóa Dữ Liệu</span>
+        </h2>
+        <div class="lang-en">
+          <ul>
+            <li><strong>In-App Privacy Preferences:</strong> Open <strong>Settings &rarr; Privacy Preferences</strong> inside AquaWave at any time to switch off <em>Personalized Ads</em> (activates Google's <code>npa=1</code> non-personalized ads flag immediately) or reopen the official <em>Google Consent Settings</em> (UMP) form in EEA, UK, and Switzerland regions.</li>
+            <li><strong>Deleting Local App Data:</strong> Because AquaWave has no user accounts or cloud database, you can permanently delete 100% of your local data at any time by clearing the app's storage in Android Settings or uninstalling AquaWave from your device.</li>
+            <li><strong>Managing Your Advertising ID:</strong> You can reset or delete your device's Google Advertising ID at any time in Android <strong>Settings &rarr; Google &rarr; Ads</strong> (or <strong>Privacy &rarr; Ads</strong>).</li>
+          </ul>
+        </div>
+        <div class="lang-vi">
+          <ul>
+            <li><strong>Tùy chọn quyền riêng tư trong ứng dụng:</strong> Mở <strong>Cài đặt &rarr; Tùy chọn quyền riêng tư</strong> trong AquaWave bất cứ lúc nào để tắt <em>Quảng cáo cá nhân hóa</em> (kích hoạt ngay cờ <code>npa=1</code> của Google) hoặc mở lại biểu mẫu <em>Đồng thuận Google UMP</em> tại khu vực Châu Âu/Anh/Thụy Sĩ.</li>
+            <li><strong>Xóa toàn bộ dữ liệu cục bộ:</strong> Vì AquaWave không có tài khoản và không lưu dữ liệu trên máy chủ, bạn có thể xóa vĩnh viễn 100% dữ liệu bất cứ lúc nào bằng cách chọn <em>Xóa dữ liệu ứng dụng</em> trong Cài đặt Android hoặc gỡ cài đặt ứng dụng.</li>
+            <li><strong>Quản lý Advertising ID:</strong> Bạn có thể đặt lại hoặc xóa mã quảng cáo bất cứ lúc nào tại <strong>Cài đặt Android &rarr; Google &rarr; Quảng cáo</strong> (hoặc <strong>Quyền riêng tư &rarr; Quảng cáo</strong>).</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="wellness-disclaimer" class="policy-section">
+        <span class="section-eyebrow">05</span>
+        <h2>
+          <span class="lang-en">Health &amp; Wellness Disclaimer</span>
+          <span class="lang-vi">Lưu Ý Về Sức Khỏe &amp; Miễn Trừ Y Khoa</span>
+        </h2>
+        <div class="callout callout-warn">
+          <span class="lang-en"><strong>General Wellness Tool Only:</strong> AquaWave: Water Tracker is designed solely as a personal hydration habit tracker and general wellness companion. It is <strong>not a medical device</strong> and does not provide medical advice, clinical diagnosis, or treatment. Recommended daily water targets are general estimates; if you have a medical condition (such as kidney, heart, or fluid-restriction conditions), please consult a qualified healthcare professional.</span>
+          <span class="lang-vi"><strong>Công cụ hỗ trợ thói quen sống khỏe:</strong> AquaWave: Water Tracker chỉ là ứng dụng hỗ trợ theo dõi thói quen uống nước và chăm sóc sức khỏe hằng ngày. Ứng dụng <strong>không phải là thiết bị y tế</strong> và không thay thế lời khuyên, chẩn đoán hay điều trị của bác sĩ. Nếu bạn có bệnh lý đặc thù (như bệnh thận, tim mạch hoặc cần hạn chế lượng nước nạp), vui lòng tham khảo ý kiến chuyên gia y tế.</span>
+        </div>
+      </section>
+
+      <section id="childrens-privacy" class="policy-section">
+        <span class="section-eyebrow">06</span>
+        <h2>
+          <span class="lang-en">Children's Privacy (COPPA)</span>
+          <span class="lang-vi">Quyền Riêng Tư Của Trẻ Em (COPPA)</span>
+        </h2>
+        <div class="lang-en">
+          <p>AquaWave: Water Tracker is intended for users aged <strong>13 and older</strong> and is not directed at children under 13. We do not knowingly collect personally identifiable information from children under 13. If you are a parent or guardian and believe your child has provided personal data, please contact us immediately at <a href="mailto:nguyenhuynhhai969@gmail.com">nguyenhuynhhai969@gmail.com</a>.</p>
+        </div>
+        <div class="lang-vi">
+          <p>AquaWave: Water Tracker dành cho người dùng từ <strong>13 tuổi trở lên</strong> và không hướng đến trẻ em dưới 13 tuổi. Chúng tôi không cố ý thu thập thông tin định danh cá nhân từ trẻ em dưới 13 tuổi. Nếu bạn là phụ huynh hoặc người giám hộ và có bất kỳ quan ngại nào, vui lòng liên hệ ngay qua email <a href="mailto:nguyenhuynhhai969@gmail.com">nguyenhuynhhai969@gmail.com</a>.</p>
+        </div>
+      </section>
+
+      <section id="policy-updates" class="policy-section">
+        <span class="section-eyebrow">07</span>
+        <h2>
+          <span class="lang-en">Changes to This Privacy Policy</span>
+          <span class="lang-vi">Thay Đổi Đối Với Chính Sách Này</span>
+        </h2>
+        <div class="lang-en">
+          <p>We may update this Privacy Policy periodically to reflect app improvements, SDK updates, or changes in privacy regulations. Any changes will be posted on this page with an updated "Effective" date at the top.</p>
+        </div>
+        <div class="lang-vi">
+          <p>Chúng tôi có thể cập nhật Chính sách quyền riêng tư này định kỳ khi ứng dụng có thay đổi về tính năng, SDK hoặc quy định pháp luật. Mọi cập nhật sẽ được công bố trực tiếp tại trang này kèm ngày hiệu lực mới nhất ở đầu trang.</p>
+        </div>
+      </section>
+
+      <section id="contact" class="policy-section">
+        <span class="section-eyebrow">08</span>
+        <h2>
+          <span class="lang-en">Contact Us</span>
+          <span class="lang-vi">Liên Hệ Nhà Phát Triển</span>
+        </h2>
+        <div class="lang-en">
+          <p>If you have any questions, privacy requests, or feedback regarding <strong>AquaWave: Water Tracker</strong> (<code>com.nhh.aquawave</code>), please contact the developer directly:</p>
+        </div>
+        <div class="lang-vi">
+          <p>Nếu bạn có bất kỳ câu hỏi, yêu cầu về quyền riêng tư hoặc góp ý nào cho <strong>AquaWave: Water Tracker</strong> (<code>com.nhh.aquawave</code>), vui lòng liên hệ trực tiếp với nhà phát triển:</p>
+        </div>
+
+        <div class="contact-grid">
+          <div class="contact-item">
+            <span class="contact-label"><span class="lang-en">Application</span><span class="lang-vi">Ứng dụng</span></span>
+            <span class="contact-value">AquaWave: Water Tracker (<code>com.nhh.aquawave</code>)</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label"><span class="lang-en">Developer</span><span class="lang-vi">Nhà phát triển</span></span>
+            <span class="contact-value">nhh (nhh12t1tg)</span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label"><span class="lang-en">Privacy &amp; Support Email</span><span class="lang-vi">Email hỗ trợ &amp; quyền riêng tư</span></span>
+            <span class="contact-value"><a href="mailto:nguyenhuynhhai969@gmail.com">nguyenhuynhhai969@gmail.com</a></span>
+          </div>
+          <div class="contact-item">
+            <span class="contact-label"><span class="lang-en">Developer Policy Hub</span><span class="lang-vi">Trang chính sách chung</span></span>
+            <span class="contact-value"><a href="https://nhh12t1tg.github.io/privacy.html">nhh12t1tg.github.io/privacy.html</a></span>
+          </div>
+        </div>
+      </section>
+    </main>
   </div>
+
+  <footer class="footer">
+    <span>&copy; 2026 nhh (nhh12t1tg) &mdash; AquaWave: Water Tracker.</span>
+    <div class="footer-links">
+      <a href="https://nhh12t1tg.github.io/privacy.html">General Policy</a>
+      <a href="https://nhh12t1tg.github.io/app-ads.txt">app-ads.txt</a>
+      <a href="mailto:nguyenhuynhhai969@gmail.com">Support</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      const root = document.documentElement;
+      const body = document.body;
+      const themeBtn = document.getElementById("themeToggle");
+      const iconSun = document.getElementById("iconSun");
+      const iconMoon = document.getElementById("iconMoon");
+      const langBtn = document.getElementById("langToggle");
+      const langLabel = document.getElementById("langLabel");
+
+      function applyTheme(theme) {
+        root.setAttribute("data-theme", theme);
+        const isDark = theme === "dark";
+        themeBtn.setAttribute("aria-pressed", String(isDark));
+        iconSun.style.display = isDark ? "block" : "none";
+        iconMoon.style.display = isDark ? "none" : "block";
+      }
+
+      const savedTheme = localStorage.getItem("aquawave_policy_theme");
+      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      applyTheme(savedTheme || (prefersDark ? "dark" : "light"));
+
+      themeBtn.addEventListener("click", function () {
+        const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        localStorage.setItem("aquawave_policy_theme", next);
+        applyTheme(next);
+      });
+
+      function applyLang(lang) {
+        body.setAttribute("data-lang", lang);
+        root.setAttribute("lang", lang);
+        langLabel.textContent = lang === "vi" ? "Tiếng Việt" : "English";
+      }
+
+      const savedLang = localStorage.getItem("aquawave_policy_lang");
+      applyLang(savedLang === "vi" ? "vi" : "en");
+
+      langBtn.addEventListener("click", function () {
+        const next = body.getAttribute("data-lang") === "vi" ? "en" : "vi";
+        localStorage.setItem("aquawave_policy_lang", next);
+        applyLang(next);
+      });
+
+      const links = Array.from(document.querySelectorAll(".toc-link"));
+      const sections = links
+        .map(function (link) { return document.querySelector(link.getAttribute("href")); })
+        .filter(Boolean);
+
+      if ("IntersectionObserver" in window && sections.length > 0) {
+        const observer = new IntersectionObserver(
+          function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                const id = "#" + entry.target.id;
+                links.forEach(function (l) {
+                  l.classList.toggle("active", l.getAttribute("href") === id);
+                });
+              }
+            });
+          },
+          { rootMargin: "-20% 0px -65% 0px", threshold: 0 }
+        );
+        sections.forEach(function (sec) { observer.observe(sec); });
+      }
+    })();
+  </script>
 </body>
 </html>
